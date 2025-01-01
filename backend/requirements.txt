@@ -1,0 +1,7 @@
+Flask
+flask-cors
+flask-socketio
+eventlet
+numpy
+pandas
+psycopg2-binary

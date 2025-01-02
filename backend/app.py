@@ -1,7 +1,12 @@
 from flask import Flask, request, jsonify
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO
 from flask_cors import CORS
-import uuid
+from flask_socketio import emit
+
+from events.single_battle import create_single_battle, get_single_battle, end_single_battle, \
+                                    vote_single_battle, enter_single_battle
+from events.seven_to_smoke import create_seven_to_smoke
+
 
 FRONTEND_URL = "http://localhost:5173"
 
@@ -10,76 +15,50 @@ CORS(app)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-
-# 初始化投票數據
-battles = {}
-
 @socketio.on('vote')
 def handle_vote(data):
     option = data.get('option')
     event_id = data.get('event_id')
-    if battles[event_id] :
-        votes = battles[event_id]['votes']
-        votes[option] += 1
-        print(f"[Votes] {option}")
+    votes = vote_single_battle(event_id, option)
+    if votes is not None:
         emit('voteUpdate', votes, broadcast=True)
         
 @socketio.on('enter')
 def handle_enter(data):
     event_id = data.get('event_id')
-    if battles[event_id] :
-        votes = battles[event_id]['votes']
-        print("[Client Enter] sending votes:", votes)
-        emit('voteUpdate', votes, broadcast=False)
-        
-@socketio.on('end')
-def handle_end(data):
-    event_id = data.get('event_id')
-    if battles[event_id] :
-        red_side, blue_side = battles[event_id]['red_side'], battles[event_id]['blue_side']
-        votes = battles[event_id]['votes']
-        res = {'result' : 'Not TIE', 'winner' : blue_side, 'votes' : votes}
-        if votes[red_side] > votes[blue_side] :
-            res['winner'] = red_side
-        if votes[red_side] == votes[blue_side] :
-            res['result'] = 'TIE'
-        del battles[event_id]
-        emit('voteEnd', res, broadcast=True)
-        
-            
-
-# @socketio.on('connect')
-# def handle_connect():
-#     # 當用戶連線時，發送當前的投票狀況
-#     emit('voteUpdate', votes, broadcast=False)
+    votes = enter_single_battle(event_id)
+    if votes is not None:
+        emit('voteUpdate', votes, broadcast=True)
     
-@app.route('/create_battle_event', methods=['POST'])
-def create_battle_event():
-    data = request.json
-    event_name = data.get('name')
-    red_side = data.get('red_side')
-    blue_side = data.get('blue_side')
-    
-    event_id = str(uuid.uuid4())  # 生成唯一活動 ID
-
-    battles[event_id] = {
-        'event_name': event_name,
-        'red_side': red_side,
-        'blue_side': blue_side,
-        'votes': {f"{red_side}": 0, f"{blue_side}": 0}
-    }
-    print(f"[create_event]: {red_side} v.s {blue_side}")
-    event_url = f"{FRONTEND_URL}/event/{event_id}"  # 前端活動網址
-    return jsonify({'success': True, 'event_id': event_id, 'event_url': event_url})
-
 @app.route('/event/<event_id>', methods=['GET'])
-def get_battle_events(event_id):
-    event = battles.get(event_id)
-    print("[events]")
+def get_battle_event(event_id):
+    event = get_single_battle(event_id)
     if not event:
         return jsonify({'success': False, 'message': 'Event not found'}), 404
     return jsonify({'success': True, 'event': event})
 
 
+@socketio.on('end')
+def handle_end(data):
+    event_id = data.get('event_id')
+    result = end_single_battle(event_id)
+    if result:
+        emit('voteEnd', result, broadcast=True)
+
+@app.route('/create_battle_event', methods=['POST'])
+def handle_create_battle_event():
+    data = request.json
+    event_id, event = create_single_battle(data)
+    event_url = f"{FRONTEND_URL}/event/{event_id}"
+    return jsonify({'success': True, 'event_id': event_id, 'event_url': event_url})
+
+@app.route('/create_7_to_smoke', methods=['POST'])
+def handle_create_7_to_smoke():
+    data = request.json
+    event_id, event = create_seven_to_smoke(data)
+    event_url = f"{FRONTEND_URL}/event/{event_id}"
+    return jsonify({'success': True, 'event_id': event_id, 'event_url': event_url})
+
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5001)
+    socketio.run(app, host='0.0.0.0', port=5002)
+

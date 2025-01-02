@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
+import socket from '../../socket';
 import VoteChart from './VoteChart';
 
-
-// 初始化 WebSocket 連線
-const socket = io('http://localhost:5001'); // 後端 WebSocket 伺服器的地址
 
 function VotePage({ event_id, eventInfo }) {
   const [voted, setVoted] = useState(false);

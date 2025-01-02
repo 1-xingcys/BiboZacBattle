@@ -21,3 +21,14 @@ export const get_event = async (event_id) => {
     throw error;
   }
 }
+
+export const creat_7_to_smoke = async (participants) => {
+  try {
+    const response = await apiCall(`/create_7_to_smoke`, "POST", { participants });
+    console.log("Create 7 to smoke successful");
+    return response;
+  } catch (error) {
+    console.error("Create 7 to smoke failed:", error.message);
+    throw error;
+  }
+};

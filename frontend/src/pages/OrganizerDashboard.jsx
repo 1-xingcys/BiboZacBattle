@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { creat_battle_event } from '../Api/event';
-import { io } from 'socket.io-client';
-
-const socket = io('http://localhost:5002');
+import socket from '../socket';
 
 function OrganizerDashboard() {
   const { user, logout } = useAuth();
@@ -35,6 +33,10 @@ function OrganizerDashboard() {
       setCreatResult(`fail ${error}`);
     }
   }
+
+  const handleCreate7ToSmoke = () => {
+    navigate('/create-event');
+  };
 
   if (!user) return null; // 防止未登入時直接訪問
 
@@ -69,6 +71,9 @@ function OrganizerDashboard() {
         </form>
         {creatResult && <p>{`id: ${creatResult.event_id} url: ${creatResult.event_url}`}</p>}
         <button onClick={handleVoteEnd}>vote end</button>
+      </div>
+      <div>
+        <button onClick={handleCreate7ToSmoke}>Create 7 to Smoke Event</button>
       </div>
       <button onClick={handleLogout}>Logout</button>
     </div>

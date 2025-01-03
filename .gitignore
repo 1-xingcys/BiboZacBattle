@@ -2,4 +2,5 @@ backend/bin
 backend/include
 backend/lib
 backend/pyvenv.cfg
+__pycache__*
 .vscode/

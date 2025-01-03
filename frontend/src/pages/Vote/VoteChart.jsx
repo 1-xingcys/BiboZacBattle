@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Bar } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend } from 'chart.js';
-import { io } from 'socket.io-client';
+import socket from '../../socket';
 import { colors, fontStyles, layoutStyles } from './chartStyle';
 
 // 註冊 Chart.js 必需的組件
 ChartJS.register(ChartDataLabels, BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
-
-const socket = io('http://localhost:5002');
 
 function VoteChart({ event_id, eventInfo }) {
   const [voteCount, setVoteCount] = useState(eventInfo.votes || {});

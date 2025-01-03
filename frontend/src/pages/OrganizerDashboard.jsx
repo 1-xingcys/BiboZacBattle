@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { creat_battle_event } from '../Api/event';
 import { io } from 'socket.io-client';
 
-const socket = io('http://localhost:5001');
+const socket = io('http://localhost:5002');
 
 function OrganizerDashboard() {
   const { user, logout } = useAuth();

@@ -8,7 +8,7 @@ import { colors, fontStyles, layoutStyles } from './chartStyle';
 // 註冊 Chart.js 必需的組件
 ChartJS.register(ChartDataLabels, BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 
-const socket = io('http://localhost:5001');
+const socket = io('http://localhost:5002');
 
 function VoteChart({ event_id, eventInfo }) {
   const [voteCount, setVoteCount] = useState(eventInfo.votes || {});

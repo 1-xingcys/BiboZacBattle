@@ -34,6 +34,10 @@ function OrganizerDashboard() {
     }
   }
 
+  const handleSignUp = async () => {
+    navigate(`/sign-up`);
+  }
+
   const handleCreate7ToSmoke = () => {
     navigate('/create-event');
   };
@@ -75,6 +79,7 @@ function OrganizerDashboard() {
       <div>
         <button onClick={handleCreate7ToSmoke}>Create 7 to Smoke Event</button>
       </div>
+      <button onClick={handleSignUp}>Sign Up</button>
       <button onClick={handleLogout}>Logout</button>
     </div>
   );

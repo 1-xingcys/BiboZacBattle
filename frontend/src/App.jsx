@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import OrganizerDashboard from './pages/OrganizerDashboard'
 import ParticipantDashboard from './pages/ParticipantDashboard';
 import Create7ToSmoke from './pages/Create7ToSmoke';
+import SignUp from './pages/SingUpDashboard';
 
 function ProtectedRoute({ children, role }) {
   const { user } = useAuth();
@@ -31,6 +32,14 @@ function App() {
           element={
             <ProtectedRoute role="organizer">
               <Create7ToSmoke />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/sign-up"
+          element={
+            <ProtectedRoute role="organizer">
+              <SignUp />
             </ProtectedRoute>
           }
         />

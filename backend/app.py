@@ -6,6 +6,7 @@ from flask_socketio import emit
 from events.single_battle import create_single_battle, get_single_battle, end_single_battle, \
                                     vote_single_battle, enter_single_battle
 from events.seven_to_smoke import create_seven_to_smoke
+from manage.player import generate_verification_code, save_to_file
 
 
 FRONTEND_URL = "http://localhost:5173"
@@ -58,6 +59,18 @@ def handle_create_7_to_smoke():
     event_id, event = create_seven_to_smoke(data)
     event_url = f"{FRONTEND_URL}/event/{event_id}"
     return jsonify({'success': True, 'event_id': event_id, 'event_url': event_url})
+
+@app.route('/sign_up', methods=['POST'])
+def handle_sign_up():
+    # 從請求中取得名字
+    data = request.json
+    name = data.get('name', '')  # 獲取名字字段，若無則默認為空字串
+    if not name:
+        return jsonify({"error": "Name is required"}), 400  # 返回錯誤信息
+    unique_number = generate_verification_code(name) # 生成唯一的五位數字
+    save_to_file(name, unique_number)
+    
+    return jsonify({"name": name, "veri_code": unique_number})
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5002)

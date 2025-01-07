@@ -32,3 +32,26 @@ export const creat_7_to_smoke = async (participants) => {
     throw error;
   }
 };
+
+// for admin home page
+export const get_event_info = async (a_id) => {
+  try {
+    const response = await apiCall(`/get_event_info`, "POST", { a_id });
+    console.log("event info: ", response);
+    return response;
+  } catch (error) {
+    console.error("Get event failed: ", error.message);
+    throw error;
+  }
+}
+
+export const create_new_event = async (name, a_id) => {
+  try {
+    const response = await apiCall(`/create_new_event`, "POST", { name, a_id });
+    console.log(`Create new event ${name} successfully!`);
+    return response;
+  } catch (error) {
+    console.error(`Create new event ${name} failed!`);
+    throw error;
+  }
+}

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { get_veri_code } from '../Api/player'; 
 
 function SignUpDashboard() {
+  const navigate = useNavigate(); // 使用 useNavigate 鉤子獲取 navigate 函式
   const { eventId } = useParams();
   const [errorMessage, setErrorMessage] = useState("");
   const [rows, setRows] = useState([{ name: "", verificationCode: "" }]);
@@ -25,7 +26,7 @@ function SignUpDashboard() {
       return;
     }
     try {
-        const response = await get_veri_code(name); // 呼叫 API 獲取驗證碼
+        const response = await get_veri_code(name, eventId); // 呼叫 API 獲取驗證碼
         const newRows = [...rows]; // 複製 rows
         newRows[index].verificationCode = response.veri_code; // 將 unique_number 賦值到對應行
         setRows(newRows); // 更新狀態
@@ -33,6 +34,10 @@ function SignUpDashboard() {
       } catch (error) {
         setErrorMessage("Failed to fetch verification code");
       }
+  };
+
+  const handleStart = () => {
+    navigate('/organizer'); // 跳轉到 OrganizerDashboard 頁面
   };
 
   return (
@@ -78,6 +83,14 @@ function SignUpDashboard() {
       </table>
 
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+
+      {/* 新增開始按鈕 */}
+      <div style={{ marginTop: '20px' }}>
+        <button onClick={handleStart} style={{ padding: '10px 20px', fontSize: '16px' }}>
+          Start
+        </button>
+      </div>
+
     </div>
   );
 }

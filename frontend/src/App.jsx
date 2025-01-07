@@ -6,6 +6,8 @@ import OrganizerDashboard from './pages/OrganizerDashboard'
 import ParticipantDashboard from './pages/ParticipantDashboard';
 import Create7ToSmoke from './pages/Create7ToSmoke';
 import SignUp from './pages/SingUpDashboard';
+import ManageEvent from './pages/Event/ManageEvent';
+import ManageVote from './pages/Vote/ManageVote';
 
 function ProtectedRoute({ children, role }) {
   const { user } = useAuth();
@@ -44,6 +46,13 @@ function App() {
           }
         />
         <Route path="/event/:eventId" element={<ParticipantDashboard />} />
+        <Route 
+          path="/organizer/event/:eventId/round/:roundId" element={
+            <ProtectedRoute role="organizer">
+              <ManageVote/>
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );

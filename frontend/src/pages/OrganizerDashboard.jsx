@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { creat_battle_event } from '../Api/event';
 import socket from '../socket';
+import ManageEvent from './Event/ManageEvent';
 
 function OrganizerDashboard() {
   const { user, logout } = useAuth();
@@ -81,6 +82,8 @@ function OrganizerDashboard() {
       </div>
       <button onClick={handleSignUp}>Sign Up</button>
       <button onClick={handleLogout}>Logout</button>
+
+      <ManageEvent eventId={1} eventName={'Annual Dance Battle'}/>
     </div>
   );
 }

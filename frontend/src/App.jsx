@@ -5,7 +5,7 @@ import Login from './pages/Login';
 import OrganizerDashboard from './pages/OrganizerDashboard'
 import ParticipantDashboard from './pages/ParticipantDashboard';
 import Create7ToSmoke from './pages/Create7ToSmoke';
-import SignUp from './pages/SingUpDashboard';
+import SignUpDashboard from './pages/SingUpDashboard';
 
 function ProtectedRoute({ children, role }) {
   const { user } = useAuth();
@@ -35,14 +35,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/sign-up"
-          element={
-            <ProtectedRoute role="organizer">
-              <SignUp />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/sign-up-dashboard/:eventId" element={<SignUpDashboard />} />
         <Route path="/event/:eventId" element={<ParticipantDashboard />} />
       </Routes>
     </Router>

@@ -36,7 +36,6 @@ CREATE TABLE player (
     name VARCHAR(255) PRIMARY KEY,
     veri_code INT NOT NULL,
     e_id INT NOT NULL,
-    audience BOOLEAN NOT NULL,
     FOREIGN KEY (e_id) REFERENCES events(id)
 );
 

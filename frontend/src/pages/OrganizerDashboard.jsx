@@ -1,46 +1,73 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { creat_battle_event } from '../Api/event';
+import { get_event_info, create_new_event } from '../Api/event'
 import socket from '../socket';
 
 function OrganizerDashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-
   const [eventName, setEventName] = useState('');
-  const [blue_side, setBlue_side] = useState('');
-  const [red_side, setRed_side] = useState('');
-  
+  const [creating, setCreating] = useState(false); // 控制按鈕狀態
   const [creatResult, setCreatResult] = useState({});
+  const [eventList, setEventList] = useState([]); // 用於儲存活動資訊列表
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleLogout = () => {
     logout();
     navigate('/');
   };
 
-  const handleVoteEnd = () => {
-    const event_id = creatResult.event_id;
-    socket.emit('end', { event_id });
-  }
-
-  const creatBattleEvent = async (e) => {
-    e.preventDefault();
+  const getEventInfo = async () => {
     try {
-      const result = await creat_battle_event(eventName, red_side, blue_side);
-      if(result.success) setCreatResult(result);
-    } catch(error) {
-      setCreatResult(`fail ${error}`);
+      const a_id = 'admin' || ''; // 根據用戶資訊獲取 a_id
+      const response = await get_event_info(a_id); // 調用 API 獲取資料
+      setEventList(response || []); // 如果 response 是 null，則設為空陣列
+    } catch (error) {
+      console.error("Failed to fetch event info:", error.message);
     }
-  }
+  };
+  useEffect(() => {
+    getEventInfo(); // 組件載入時自動調用
+  }, []);
+
+
+  const createEvent = async () => {
+    if (!eventName.trim()) {
+      setErrorMessage('Event name cannot be empty');
+      return;
+    }
+
+    setCreating(true);
+    try {
+      const a_id = 'admin'; // 假設 a_id 是固定的
+      const response = await create_new_event(eventName, a_id); // 呼叫 API 建立新活動
+      console.log(`Event created successfully: `, response);
+      
+      if (response.e_id) {
+        await getEventInfo(); // 重新獲取活動列表
+        navigate(`/sign-up-dashboard/${response.e_id}`); // 成功後跳轉到新活動頁面
+      } else {
+        throw new Error('Invalid response: e_id is missing');
+      }
+      
+      setCreating(false);
+    } catch (error) {
+      console.error("Failed to create event:", error.message);
+      setErrorMessage('Failed to create event. Please try again.');
+      setCreating(false);
+    }
+  };
+  useEffect(() => {
+    setErrorMessage(''); // 清除錯誤訊息
+  }, [eventName]);
+  
 
   const handleSignUp = async () => {
     navigate(`/sign-up`);
   }
 
-  const handleCreate7ToSmoke = () => {
-    navigate('/create-event');
-  };
+  
 
   if (!user) return null; // 防止未登入時直接訪問
 
@@ -48,38 +75,39 @@ function OrganizerDashboard() {
     <div>
       <div>
         <h1>Organizer Dashboard</h1>
-          <h2>Create Battle</h2>
-          <form onSubmit={creatBattleEvent}>
-          <input
-            type="text"
-            placeholder="Event Name"
-            value={eventName}
-            onChange={(e) => setEventName(e.target.value)}
-          />
-          <br />
-          <input
-            type="text"
-            placeholder="Red side"
-            value={red_side}
-            onChange={(e) => setRed_side(e.target.value)}
-          />
-          v.s
-          <input
-            type="text"
-            placeholder="Blue side"
-            value={blue_side}
-            onChange={(e) => setBlue_side(e.target.value)}
-          />
-          <br />
-          <button type="submit">Create Battle Event</button>
-        </form>
-        {creatResult && <p>{`id: ${creatResult.event_id} url: ${creatResult.event_url}`}</p>}
-        <button onClick={handleVoteEnd}>vote end</button>
+      </div>
+
+      <div>
+        <h2>Event List</h2>
+          {Array.isArray(eventList) && eventList.length > 0 ? (
+          eventList.map((event, index) => (
+            <div key={index} style={{ marginBottom: '10px' }}>
+              <strong>{event.name}</strong> <span>(ID: {event.e_id})</span>
+              <br />
+              日期：{event.date}
+              <br />
+              狀態：{event.champ_name === null ? '進行中' : '已完成'}
+              <hr />
+            </div>
+          ))
+        ) : (
+          <p>No events available.</p>
+        )}
       </div>
       <div>
-        <button onClick={handleCreate7ToSmoke}>Create 7 to Smoke Event</button>
+        <h2>Create New Event</h2>
+        <input
+          type="text"
+          placeholder="Enter event name"
+          value={eventName}
+          onChange={(e) => setEventName(e.target.value)}
+        />
+        <button onClick={createEvent} disabled={creating}>
+          {creating ? 'Creating...' : 'Create'}
+        </button>
+        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+        <button onClick={handleLogout}>Logout</button>
       </div>
-      <button onClick={handleSignUp}>Sign Up</button>
       <button onClick={handleLogout}>Logout</button>
     </div>
   );

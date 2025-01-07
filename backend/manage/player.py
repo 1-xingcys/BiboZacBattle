@@ -18,20 +18,13 @@ def generate_verification_code(name):
             return number
 
 
-def add_player(player, veri_code, e_id):
+def add_player(p_name, veri_code, e_id):
     query = """
     INSERT INTO player (name, veri_code, e_id)
     VALUES (%s, %s, %s)
     """
-    conn = connect_to_database()
-    cur = conn.cursor()
-    try:
-        cur.executemany(query, (player, veri_code, e_id))
-        conn.commit()
-        print(f"{len(player)} player added successfully")
-    except Exception as e:
-        conn.rollback()
-        print(f"Failed to add player: {e}")
-    finally:
-        cur.close()
-        conn.close()
+    success, rowcount = execute_query(query, (p_name, veri_code, e_id))
+    if success and rowcount > 0:
+        print(f"{p_name} player added successfully")
+        return True
+    return False

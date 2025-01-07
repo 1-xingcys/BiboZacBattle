@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 
 function ManageVote() {
-  const { eventId, roundId } = useParams();
+  const { eventId, roundId, eventName } = useParams();
   const navigate = useNavigate();
 
   const handleBack = () => {
-    navigate(`/organizer`);
+    navigate(`/organizer/event/${eventId}/${eventName}`);
   }
   const handleCompute = () => {
     console.log('handle compute');
@@ -18,6 +18,7 @@ function ManageVote() {
   return (
     <div>
       <p>Event ID: {eventId}</p>
+      <p>Event Name: {eventName}</p>
       <p>Round ID: {roundId}</p>
       <button onClick={handleBack}>
           返回

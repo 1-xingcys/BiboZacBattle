@@ -5,9 +5,10 @@ import socket from '../../socket';
 import styles from './ManageEvent.module.css';
 import Create1on1 from './Create1on1';
 
-function ManageEvent( {eventId, eventName} ) {
+function ManageEvent() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { eventId, eventName } = useParams();
 
   const [rounds, setRounds] = useState([]);
   const [players, setPlayers] = useState([]);
@@ -64,7 +65,7 @@ function ManageEvent( {eventId, eventName} ) {
   const handleManage = (roundId, eventId) => {
     console.log(`Managing round ${roundId} in event ${eventId}`);
     // 跳轉到管理頁面或執行管理邏輯
-    navigate(`/organizer/event/:${eventId}/round/:${roundId}`);
+    navigate(`/organizer/event/${eventId}/${eventName}/round/${roundId}`);
   };
 
   const handleSubmitCreate1on1 = () => {
@@ -82,7 +83,7 @@ function ManageEvent( {eventId, eventName} ) {
     })
     setInfo1on1({'red_name': '', 'blue_name': '', 'type': ''})
     // 設置定時器，3 秒後清除訊息
-    setTimeout(() => setCreateMessage(null), 3000);
+    setTimeout(() => setCreateMessage(null), 1000);
   }
 
   return (

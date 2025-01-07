@@ -59,15 +59,14 @@ function OrganizerDashboard() {
       setCreating(false);
     }
   };
+
   useEffect(() => {
     setErrorMessage(''); // 清除錯誤訊息
   }, [eventName]);
-  
 
-  const handleSignUp = async () => {
-    navigate(`/sign-up`);
+  const handleClickEvent = (eventId, eventName) => {
+    navigate(`/organizer/event/${eventId}/${eventName}`);
   }
-
   
 
   if (!user) return null; // 防止未登入時直接訪問
@@ -89,6 +88,7 @@ function OrganizerDashboard() {
               <br />
               狀態：{event.champ_name === null ? '進行中' : '已完成'}
               <hr />
+              <button onClick={() => handleClickEvent(event.e_id, event.name)}>Go!</button>
             </div>
           ))
         ) : (
@@ -110,8 +110,6 @@ function OrganizerDashboard() {
         <button onClick={handleLogout}>Logout</button>
       </div>
       <button onClick={handleLogout}>Logout</button>
-
-      <ManageEvent eventId={1} eventName={'Annual Dance Battle'}/>
     </div>
   );
 }

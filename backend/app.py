@@ -153,13 +153,13 @@ def create_new_event():
     # 從請求中取得名字
     data = request.json
     name = data.get('name', '')  # 獲取名字字段，若無則默認為空字串
-    a_id = data.get('a_id', '')  # 獲取名字字段，若無則默認為空字串
+    a_id = data.get('a_id', '')  
     if not a_id:
         return jsonify({"error": "a_id is required"}), 400  # 返回錯誤信息
 
-    e_id = add_event(name, a_id)
-    if e_id:
-        return jsonify({"e_id": e_id}), 200
+    res = add_event(name, a_id)
+    if res:
+        return jsonify(res), 200
     else:
         return jsonify({"error": "Failed to create event"}), 500
 

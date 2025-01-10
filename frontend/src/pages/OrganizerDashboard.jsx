@@ -5,7 +5,6 @@ import { get_event_info, create_new_event } from '../Api/event'
 import socket from '../socket';
 import ManageEvent from './Event/ManageEvent';
 
-
 function OrganizerDashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();

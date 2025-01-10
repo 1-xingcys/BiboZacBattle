@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { get_event_info, create_new_event } from '../Api/event';
+import { useAuth } from '../../context/AuthContext';
+import { get_event_info, create_new_event } from '../../Api/event';
 import './OrganizerDashboardCSS.css'; // 匯入 CSS
 
 function OrganizerDashboard() {

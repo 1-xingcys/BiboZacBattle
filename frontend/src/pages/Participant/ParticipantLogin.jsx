@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { authentication } from '../Api/player';
+import { useAuth } from '../../context/AuthContext';
+import { authentication } from '../../Api/player';
 
 function ParticipantLogin() {
   const { eventId, eventName } = useParams();

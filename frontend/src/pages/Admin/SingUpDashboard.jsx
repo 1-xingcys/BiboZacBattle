@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { get_veri_code } from '../Api/player';
+import { get_veri_code } from '../../Api/player';
 
 function SignUpDashboard() {
   const navigate = useNavigate();

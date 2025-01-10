@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import socket from '../socket';
+import { useAuth } from '../../context/AuthContext';
+import socket from '../../socket';
 
 function ParticipantDashboard() {
   const { eventId, eventName } = useParams();

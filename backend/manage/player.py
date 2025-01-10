@@ -28,3 +28,15 @@ def add_player(p_name, veri_code, e_id):
         print(f"{p_name} player added successfully")
         return True
     return False
+
+def authentication(veri_code, e_id):
+    query = """
+    SELECT name
+    FROM player
+    WHERE veri_code = %s AND e_id = %s
+    """
+    rows = execute_select_query(query, (veri_code, e_id))
+    if rows:
+        print(f"Player {rows[0][0]} in event {e_id} login")
+        return rows[0][0]
+    return ""

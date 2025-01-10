@@ -13,7 +13,6 @@ def get_event(a_id):
     formatted_results = []
     for row in res:
         e_id, e_name, date_val, champ_name = row
-        print(f'type date_val = {type(date_val)}', flush=True)
         if isinstance(date_val, date):  # 如果是 date 類型，轉為字串
             date_val = date_val.strftime('%Y-%m-%d')  # 格式化為 'YYYY-MM-DD'  
         formatted_results.append({

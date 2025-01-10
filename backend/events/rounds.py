@@ -47,7 +47,31 @@ def get_players(event_id):
         })
 
     return formatted_results
+
+
+def get_status(event_id):
+  query = """
+  SELECT r_id, datetime, red_name, blue_name, res, type, status
+  FROM round
+  WHERE e_id = %s AND status IN ('inProgress', 'voting');
+  """
+  rows = execute_select_query(query, (event_id,))
+  if not rows:
+    return { 'battling' : False }
   
+  r_id, datetime_val, red_name, blue_name, res, type, status = rows[0]
+  if isinstance(datetime_val, datetime):  # 如果是 datetime，轉為字串
+          datetime_val = datetime_val.isoformat() 
+  return {
+        'battling' : True,
+        'r_id' : r_id,
+        'datetime' : datetime_val,
+        'red_name' : red_name,
+        'blue_name' : blue_name,
+        'res' : res,
+        'type' : type,
+        'status' : status
+      }
   
 """
 For a given round

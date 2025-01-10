@@ -33,9 +33,10 @@ CREATE TABLE events (
 );
 
 CREATE TABLE player (
-    name VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
     veri_code INT NOT NULL,
     e_id INT NOT NULL,
+    PRIMARY KEY (name, e_id),
     FOREIGN KEY (e_id) REFERENCES events(id)
 );
 

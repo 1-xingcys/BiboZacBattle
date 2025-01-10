@@ -1,0 +1,62 @@
+/* OrganizerDashboard.css */
+
+/* 標題樣式 */
+h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+  
+  h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+  
+  /* 表單區域樣式 */
+  input[type="text"] {
+    padding: 10px;
+    font-size: 16px;
+    margin-right: 10px;
+    flex: 1;
+  }
+  
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  /* 活動列表樣式 */
+  .event-card {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 15px;
+  }
+  
+  .event-card a {
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #007bff;
+  }
+  
+  .event-card a:hover {
+    text-decoration: underline;
+  }
+  
+  .event-card p {
+    margin: 5px 0;
+  }
+  
+  /* 登出按鈕 */
+  .logout-button {
+    margin-top: 30px;
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+  

@@ -1,3 +1,6 @@
+/* ---------------------------------------------------------- */
+/* About Card Begin*/
+/* ---------------------------------------------------------- */
 .cardContainer {
   display: flex;
   flex-direction: column; /* 垂直排列 */
@@ -36,15 +39,63 @@
   flex-grow: 1; /* 讓內容區域占用剩餘空間 */
 }
 
-.cardButton, .createButton {
+.cardButton {
   padding: 10px 20px;
   font-size: 1rem;
-  color: #fff;
-  background-color: #9e878d;
+  color: var(--buttom-color);
+  background-color: var(--buttom-background);
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+}
+
+.cardButton:hover {
+  background-color: var(--buttom-hover); /* 按鈕 hover 時的顏色 */
+}
+
+.cardButton:active {
+  background-color: var(--buttom-active); /* 按鈕按下時的顏色 */
+}
+
+.cardButton:disabled {
+  background-color: var(--buttom-dsiable);
+  cursor: not-allowed;
+}
+
+/* 父容器，用於排列按鈕 */
+.cardButtonGroup {
+  display: flex; /* 將子項橫向排列 */
+  gap: 20px; /* 按鈕之間的間距 */
+  flex-wrap: wrap; /* 如果按鈕過多，允許換行 */
+}
+
+/* ---------------------------------------------------------- */
+/* About Card End*/
+/* ---------------------------------------------------------- */
+
+
+/* ---------------------------------------------------------- */
+/* About Create Rounds Feature Start*/
+/* ---------------------------------------------------------- */
+
+/* 父容器，用於排列按鈕 */
+.buttonGroup {
+  display: flex; /* 將子項橫向排列 */
+  gap: 20px; /* 按鈕之間的間距 */
+  flex-wrap: wrap; /* 如果按鈕過多，允許換行 */
+}
+
+@media (max-width: 600px) {
+  .buttonGroup {
+    flex-direction: column;
+  }
+}
+
+/* 容器樣式 */
+.toggleContainer {
+  flex: 1 1 auto; /* 使每個按鈕容器有彈性，根據內容自適應寬度 */
+  min-width: 200px; /* 設定按鈕容器的最小寬度 */
 }
 
 /* 按鈕樣式 */
@@ -53,68 +104,26 @@
   width: max(180px, 90%);
   margin-top: 10px;
   padding: 10px 20px;
-  background-color: #9e878d;
-  color: #fff;
+  background-color: var(--buttom-background);
+  color: var(--buttom-color);
   border-radius: 5px;
   cursor: pointer;
   text-align: center;
   transition: background-color 0.3s ease;
 }
 
-.cardButton:hover, .createButton:hover, .toggleButton:hover {
-  background-color: #5e1717; /* 按鈕 hover 時的顏色 */
+
+.toggleButton:hover {
+  background-color: var(--buttom-hover); /* 按鈕 hover 時的顏色 */
 }
 
-.cardButton:active, .createButton:active, .toggleButton:active {
-  background-color: #1e0a0b; /* 按鈕按下時的顏色 */
+.toggleButton:active {
+  background-color: var(--buttom-active); /* 按鈕按下時的顏色 */
 }
 
-.formContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-label {
-  font-size: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-select,
-input {
-  padding: 8px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.submitButton {
-  padding: 10px 20px;
-  font-size: 1rem;
-  color: #fff;
-  background-color: #4caf50;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.submitButton:disabled, .cardButton:disabled, .createButton:disabled, .toggleButton:disabled {
-  background-color: #ccc;
+.toggleButton:disabled {
+  background-color: var(--buttom-dsiable);
   cursor: not-allowed;
-}
-
-.submitButton:hover:enabled {
-  background-color: #45a049;
-}
-
-/* 容器樣式 */
-.toggleContainer {
-  flex: 1 1 auto; /* 使每個按鈕容器有彈性，根據內容自適應寬度 */
-  min-width: 200px; /* 設定按鈕容器的最小寬度 */
 }
 
 /* 隱藏 checkbox */
@@ -137,17 +146,39 @@ input {
   display: block;
 }
 
-/* 父容器，用於排列按鈕 */
-.buttonGroup {
-  display: flex; /* 將子項橫向排列 */
-  gap: 20px; /* 按鈕之間的間距 */
-  flex-wrap: wrap; /* 如果按鈕過多，允許換行 */
+/* ---------------------------------------------------------- */
+/* About Create Rounds Feature End*/
+/* ---------------------------------------------------------- */
+
+/* ---------------------------------------------------------- */
+/* About Create 1on1 Form Start*/
+/* ---------------------------------------------------------- */
+
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
 }
 
-@media (max-width: 600px) {
-  .buttonGroup {
-    flex-direction: column;
-  }
+.submitButton {
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #4caf50;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submitButton:disabled {
+  background-color: var(--buttom-dsiable);
+  cursor: not-allowed;
+}
+
+.submitButton:hover:enabled {
+  background-color: #45a049;
 }
 
 .successMessage {
@@ -167,3 +198,7 @@ input {
   color: #a94442;
   border-radius: 5px;
 }
+
+/* ---------------------------------------------------------- */
+/* About Create 1on1 Form End*/
+/* ---------------------------------------------------------- */

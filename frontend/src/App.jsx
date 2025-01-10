@@ -8,6 +8,7 @@ import Create7ToSmoke from './pages/Create7ToSmoke';
 import SignUpDashboard from './pages/SingUpDashboard';
 import ManageEvent from './pages/Event/ManageEvent';
 import ManageVote from './pages/Vote/ManageVote';
+import ParticipantLogin from './pages/ParticipantLogin';
 
 function ProtectedRoute({ children, role }) {
   const { user } = useAuth();
@@ -38,7 +39,7 @@ function App() {
           }
         />
         <Route path="/sign-up-dashboard/:eventId" element={<SignUpDashboard />} />
-        <Route path="/event/:eventId" element={<ParticipantDashboard />} />
+        <Route path="/participant/:eventId/:eventName/:username" element={<ParticipantDashboard />} />
         <Route 
           path="/organizer/event/:eventId/:eventName/round/:roundId" element={
             <ProtectedRoute role="organizer">
@@ -53,6 +54,7 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        <Route path="/participant/:eventId/:eventName" element={<ParticipantLogin />} />
       </Routes>
     </Router>
   );

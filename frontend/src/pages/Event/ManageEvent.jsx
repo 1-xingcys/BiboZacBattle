@@ -12,16 +12,18 @@ function ManageEvent() {
 
   const [rounds, setRounds] = useState([]);
   const [players, setPlayers] = useState([]);
-  const [info1on1, setInfo1on1] = useState({'red_name': '', 'blue_name': '', 'type': ''});
 
-
-  const [createResult, setCreateResult] = useState(false);
-  const [createMessage, setCreateMessage] = useState(null);
 
   // 確定是否有 "inProgress" 的 round
   const isInProgress = rounds.some((round) => round.status === 'inProgress');
 
   useEffect(() => {
+    socket.on('response_join', (data) => {
+      console.log(data);
+    });
+
+    socket.emit('request_join', { eventId });
+
     socket.on('response_round', (data) => {
       console.log('Received round:', data);
       setRounds(data);
@@ -33,10 +35,13 @@ function ManageEvent() {
     });
 
     return () => {
+      socket.off('response_join');
+      socket.off('response_leave');
       socket.off('response_round');
       socket.off('response_players');
+      
       socket.emit('request_rounds', { eventId });
-      socket.emit('request_players', { eventId});
+      socket.emit('request_players', { eventId });
     };
   }, []);
 
@@ -68,27 +73,22 @@ function ManageEvent() {
     navigate(`/organizer/event/${eventId}/${eventName}/round/${roundId}`);
   };
 
-  const handleSubmitCreate1on1 = () => {
-    socket.off('response_create1on1');
-    console.log('Create 1on1 :', info1on1);
-    socket.emit('request_create1on1', { info1on1, eventId });
-    socket.on('response_create1on1', (data) =>{
-      console.log('Received create 1on1 response:', data);
-      setCreateResult(data);
-      if(data){
-        setCreateMessage({ type: 'success', text: '提交成功！' });
-      } else {
-        setCreateMessage({ type: 'error', text: '提交失敗，請重試。' });
-      }
-    })
-    setInfo1on1({'red_name': '', 'blue_name': '', 'type': ''})
-    // 設置定時器，3 秒後清除訊息
-    setTimeout(() => setCreateMessage(null), 1000);
-  }
+  const handleBack = () => {
+    socket.on('response_leave', (data) => {
+      console.log(data);
+    });
+    socket.emit('request_leave', { eventId });
+    navigate(`/organizer`);
+  };
 
   return (
     <div>
-      <h1>{`${user.username} ${eventName} 控制中心`}</h1>
+      <label onClick={handleBack}>
+        <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#5f6368"><path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/></svg>
+      </label>
+      <span>{user.username}</span>
+
+      <h1>{`${eventName} 控制中心`}</h1>
       <div className={styles.cardContainer}>
         {rounds.map((round, index) => (
           <div key={round.r_id} className={styles.card}>
@@ -107,18 +107,7 @@ function ManageEvent() {
       </div>
       
       <div className={styles.buttonGroup}>
-        <div className={styles.toggleContainer}>
-          {/* 隱藏的 checkbox 控制開關 */}
-          <input type="checkbox" id="toggle1on1" className={styles.toggleCheckbox} />
-          {/* 按鈕標籤連結到 checkbox */}
-          <label htmlFor="toggle1on1" className={styles.toggleButton}>
-            新增 1on1 對戰組合
-          </label>
-          {/* 要顯示/隱藏的內容 */}
-          <div className={styles.toggleContent}>
-            <Create1on1 info1on1={info1on1} setInfo1on1={setInfo1on1} players={players} handleSubmit={handleSubmitCreate1on1} createMessage={createMessage}/>
-          </div>
-        </div>
+        <Create1on1 players={players}/>
 
         <div className={styles.toggleContainer}>
           <input type="checkbox" id="toggle7ToSmoke" className={styles.toggleCheckbox} />
@@ -147,7 +136,7 @@ function ManageEvent() {
 function renderButtons(round, eventId, isInProgress, handleStart, handleStop, handleManage) {
   if (round.status === 'inProgress') {
     return (
-      <div className={styles.buttonGroup}>
+      <div className={styles.cardButtonGroup}>
         {/* 暫停按鈕 */}
         <button
           className={styles.cardButton}

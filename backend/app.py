@@ -1,13 +1,14 @@
 from flask import Flask, request, jsonify
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, join_room, leave_room
 from flask_cors import CORS
 from flask_socketio import emit
 
 from events.single_battle import create_single_battle, get_single_battle, end_single_battle, \
                                     vote_single_battle, enter_single_battle
 from events.seven_to_smoke import create_seven_to_smoke
-from events.rounds import get_rounds, get_players, create_single_round, start_round, stop_round
-from manage.player import generate_verification_code, add_player
+from events.rounds import get_rounds, get_players, create_single_round, start_round, stop_round, \
+                            get_status
+from manage.player import generate_verification_code, add_player, authentication
 from manage.event_info import get_event, add_event
 
 
@@ -63,6 +64,12 @@ def handle_start_round(data):
         rounds = get_rounds(event_id)
         if rounds is not None:
             emit('response_round', rounds, broadcast=False)
+            round = {}
+            for rd in rounds:
+                if rd['r_id'] == r_id:
+                    round = rd | { 'battling' : True }
+                    break    
+            emit('inform_event_status', round, to=event_id)
 
 @socketio.on('request_stop_round')
 def handle_stop_round(data):
@@ -74,6 +81,43 @@ def handle_stop_round(data):
         rounds = get_rounds(event_id)
         if rounds is not None:
             emit('response_round', rounds, broadcast=False)
+            round = {}
+            for rd in rounds:
+                if rd['r_id'] == r_id:
+                    round = rd | { 'battling' : False }
+                    break    
+            emit('inform_event_status', round, to=event_id)
+
+            
+# 同個活動的參賽者會分配到同個 room
+@socketio.on('request_join')
+def on_join(data):
+    sid = request.sid # get frontend session id
+    e_id = data['eventId']  # 客戶端傳遞的房間名稱
+    join_room(e_id)     # 加入房間
+    emit('response_join', f'{sid} joined room {e_id}', broadcast=False)
+    print(f"{sid} joined room {e_id}", flush=True)
+    
+    # Get all clients in this room
+    clients = list(socketio.server.manager.rooms.get('/', {}).get(e_id, []))
+    print(f"Room {e_id} has clients: {clients}", flush=True)
+
+@socketio.on('request_leave')
+def on_leave(data):
+    sid = request.sid
+    e_id = data['eventId']
+    leave_room(e_id)
+    emit('response_leave', f'{sid} left room {e_id}', broadcast=False)  # 廣播離開通知
+    print(f'{sid} left room {e_id}', flush=True)
+    clients = list(socketio.server.manager.rooms.get('/', {}).get(e_id, []))
+    print(f"Room {e_id} has clients: {clients}", flush=True)
+    
+@socketio.on('request_event_status')
+def handle_event_status(data):
+    e_id = data['eventId']
+    res = get_status(e_id)
+    print(f"client request event status", flush=True)
+    emit('inform_event_status', res, broadcast=False)
 
 @socketio.on('vote')
 def handle_vote(data):
@@ -163,6 +207,15 @@ def create_new_event():
     else:
         return jsonify({"error": "Failed to create event"}), 500
 
+@app.route('/player/login', methods=['POST'])
+def player_login():
+    data = request.json
+    e_id = data.get('e_id')
+    veri_code = data.get('veri_code')
+    name = authentication(veri_code, e_id)
+    if name:
+        return jsonify({'name': name}), 200
+    return jsonify({'error': 'invalid verification code'}), 403
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000)

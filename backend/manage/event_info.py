@@ -37,16 +37,12 @@ def add_event(name, a_id):
     WHERE name = %s AND a_id = %s
     """
     
-    formatted_results = []
     success, rowcount = execute_query(query_add, (name, a_id))
     print(f"insert events {name} {success}!\n")
     if success and rowcount > 0:
         res = execute_select_query(query_select, (name, a_id))
-        for row in res:
-            e_name, e_id = row 
-            formatted_results.append({
-                'name' : e_name,
-                'e_id' : e_id
-            })
-        return formatted_results
-    return formatted_results
+        if res and len(res) > 0:
+            e_name, e_id = res[0]  # 解構第一列資料
+            formatted_results = { 'e_name': e_name, 'e_id': e_id }
+            return formatted_results
+    return False

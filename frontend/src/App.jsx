@@ -37,7 +37,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/sign-up-dashboard/:eventId" element={<SignUpDashboard />} />
+        <Route path="/sign-up-dashboard/:eventId/:eventName" element={<SignUpDashboard />} />
         <Route path="/event/:eventId" element={<ParticipantDashboard />} />
         <Route 
           path="/organizer/event/:eventId/:eventName/round/:roundId" element={

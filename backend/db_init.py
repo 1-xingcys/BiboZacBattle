@@ -33,17 +33,16 @@ CREATE TABLE events (
 );
 
 CREATE TABLE player (
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL PRIMARY KEY,
     veri_code INT NOT NULL,
     e_id INT NOT NULL,
-    PRIMARY KEY (name, e_id),
     FOREIGN KEY (e_id) REFERENCES events(id)
 );
 
 CREATE TYPE round_result_enum AS ENUM ('red', 'blue', 'tie', 'nan');
 CREATE TYPE round_status_enum AS ENUM ('inProgress', 'voting', 'end', 'new');
 CREATE TABLE round (
-    r_id SERIAL,
+    r_id SERIAL NOT NULL,
     e_id INT NOT NULL,
     datetime TIMESTAMP NOT NULL,
     red_name VARCHAR(255) NOT NULL,
@@ -52,9 +51,7 @@ CREATE TABLE round (
     status round_status_enum DEFAULT 'new',
     type VARCHAR(255) NOT NULL,
     PRIMARY KEY (r_id, e_id),
-    FOREIGN KEY (e_id) REFERENCES events(id),
-    FOREIGN KEY (red_name) REFERENCES player(name),
-    FOREIGN KEY (blue_name) REFERENCES player(name)
+    FOREIGN KEY (e_id) REFERENCES events(id)
 );
 
 CREATE TYPE vote_result_enum AS ENUM ('red', 'blue', 'tie');

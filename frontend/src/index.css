@@ -1,0 +1,26 @@
+/* Shared CSS */
+
+/* Define Variable that can be used by .module.css for consistentcy */
+:root {
+  --buttom-color : #fff; 
+  --buttom-background : #9e878d;
+  --buttom-hover : #5e1717;
+  --buttom-active : #1e0a0b;
+  --buttom-dsiable : #ccc;
+}
+
+
+/* Shared Decoration */
+label {
+  font-size: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+select, input {
+  padding: 8px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}

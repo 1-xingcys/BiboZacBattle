@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import socket from '../../socket';
 
 function ManageVote() {
   const { eventId, roundId, eventName } = useParams();

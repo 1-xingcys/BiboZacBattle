@@ -28,3 +28,30 @@ def add_player(p_name, veri_code, e_id):
         print(f"{p_name} player added successfully")
         return True
     return False
+
+
+def get_player(e_id):
+    query = """
+    SELECT name, veri_code
+    FROM player
+    WHERE e_id = %s
+    """
+    res = execute_select_query(query, (e_id, ))
+
+    formatted_results = []
+    for row in res:
+        p_name, veri_code = row
+        formatted_results.append({ 'p_name': p_name, 'veri_code': veri_code })
+    return formatted_results
+
+
+def delete_player(e_id, p_name):
+    query = """
+    DELETE FROM player
+    WHERE e_id = %s AND name = %s
+    """
+    success, rowcount = execute_query(query, (e_id, p_name))
+    if success and rowcount > 0:
+        print(f"{p_name} player deleted successfully")
+        return True
+    return False

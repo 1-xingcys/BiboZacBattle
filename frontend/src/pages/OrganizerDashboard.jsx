@@ -44,7 +44,7 @@ function OrganizerDashboard() {
 
       if (response.e_id) {
         await getEventInfo();
-        navigate(`/sign-up-dashboard/${response.e_id}/${response.e_name}`);
+        handlePlayer(response.e_id, response.e_name);
       } else {
         throw new Error('Invalid response: e_name is missing');
       }
@@ -56,6 +56,10 @@ function OrganizerDashboard() {
       setErrorMessage('Failed to create event. Please try again.');
       setCreating(false);
     }
+  };
+
+  const handlePlayer = (e_id, e_name) => {
+    navigate(`/sign-up-dashboard/${e_id}/${e_name}`);
   };
 
   useEffect(() => {
@@ -99,6 +103,7 @@ function OrganizerDashboard() {
                 </a>
                 <p>Date: {event.date}</p>
                 <p>Status: {event.champ_name === null ? '進行中' : '已完成'}</p>
+                <button onClick={() => handlePlayer(event.e_id, event.name)}>管理參賽者</button>
               </div>
             ))}
           </div>

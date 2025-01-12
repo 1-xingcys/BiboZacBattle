@@ -7,8 +7,8 @@ from events.single_battle import create_single_battle, get_single_battle, end_si
                                     vote_single_battle, enter_single_battle
 from events.seven_to_smoke import create_seven_to_smoke
 from events.rounds import get_rounds, get_players, create_single_round, start_round, stop_round
-from manage.player import generate_verification_code, add_player
-from manage.event_info import get_event, add_event
+from manage.player import generate_verification_code, add_player, get_player
+from manage.event_info import get_event, add_event, delete_player
 
 
 FRONTEND_URL = "http://localhost:5173"
@@ -133,6 +133,27 @@ def handle_sign_up():
     add_player(name, unique_number, e_id)
     
     return jsonify({"name": name, "veri_code": unique_number})
+
+@socketio.on('get_player')
+def get_player_info(data):
+    e_id = data.get('eventId')
+    res = get_player(e_id)
+    if res:
+        emit('response_player_info', res, broadcast=False)
+    else:
+        emit('response_player_info', [], broadcast=False)
+
+@socketio.on('delete_player_info')
+def delete_player_info(data):
+    e_id = data.get('eventId')
+    player_name = data.get('playerName')
+
+    success = delete_player(e_id, player_name)
+    if success:
+        emit('response_delete_player', {'success': True})
+    else:
+        emit('response_delete_player', {'success': False, 'message': 'Failed to delete player'})
+
 
 # admin check event info
 @app.route('/get_event_info', methods=['POST'])

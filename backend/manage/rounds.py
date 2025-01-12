@@ -53,7 +53,7 @@ def get_status(event_id):
   query = """
   SELECT r_id, datetime, red_name, blue_name, res, type, status
   FROM round
-  WHERE e_id = %s AND status IN ('inProgress', 'voting');
+  WHERE e_id = %s AND status IN ('inProgress', 'voting', 'checking');
   """
   rows = execute_select_query(query, (event_id,))
   if not rows:
@@ -91,12 +91,13 @@ def start_round(event_id, r_id):
   query = """
   UPDATE round
   SET status = 'inProgress'
-  WHERE r_id = %s and e_id = %s and status IN ('new', 'end');
+  WHERE r_id = %s and e_id = %s and status IN ('new', 'end', 'checking');
   """
   success, rowcount = execute_query(query, (r_id, event_id))
   if success and (rowcount > 0):
-    print(f"Start round {r_id} successfully", flush=True)
+    print(f"Start eventId : {event_id}, roundId : {r_id} successfully", flush=True)
     return True
+  print(f"Start eventId : {event_id}, roundId : {r_id} failed", flush=True)
   return False
 
 def stop_round(event_id, r_id):
@@ -110,17 +111,18 @@ def stop_round(event_id, r_id):
   """
   success, rowcount = execute_query(query, (r_id, event_id))
   if success and (rowcount > 0):
-    print(f"Stop round {r_id} successfully", flush=True)
+    print(f"Stop eventId : {event_id}, roundId : {r_id} successfully", flush=True)
     return True
+  print(f"Stop eventId : {event_id}, roundId : {r_id} failed", flush=True)
   return False
 
 def vote_round(event_id, r_id):
   query = """
   UPDATE round
-  SET status = 'voting'
-  WHERE r_id = %s and e_id = %s and status = 'inProgress';
+  SET status = 'voting'::round_status_enum
+  WHERE r_id = %s AND e_id = %s and status = 'inProgress';
   """
-  success, rowcount = execute_query(query, (event_id, r_id))
+  success, rowcount = execute_query(query, (r_id, event_id))
   if success and (rowcount > 0):
     return True
   return False
@@ -136,7 +138,9 @@ def player_vote(event_id, r_id, p_name, side):
   """
   success, rowcount = execute_query(query, (p_name, r_id, event_id, side))
   if success and (rowcount > 0):
+    print(f"Player {p_name} vote {side} at eventId : {event_id}, roundId : {r_id} successfully", flush=True)
     return True
+  print(f"Player {p_name} vote {side} at eventId : {event_id}, roundId : {r_id} failed", flush=True)
   return False
   
 def compute_result(event_id, r_id):
@@ -152,7 +156,13 @@ def compute_result(event_id, r_id):
   GROUP BY r_id, e_id;
   """
   rows = execute_select_query(query, (r_id, event_id))
-  _, __, red_votes, blue_votes, tie_votes = rows[0]
+  print(f"From compute_result: rows = {rows}", flush=True)
+  if rows:
+    _, __, red_votes, blue_votes, tie_votes = rows[0]
+  else :
+    red_votes, blue_votes, tie_votes = 0,0,0
+    
+  print(f"Compute Result e_id = {event_id}, r_id = {r_id}\n red : {red_votes}, blue : {blue_votes}, tie : {tie_votes}", flush=True)
   
   res = ''
   if tie_votes * 1.25 > (red_votes + blue_votes + tie_votes):
@@ -166,10 +176,23 @@ def compute_result(event_id, r_id):
   
   query = """
   UPDATE round
-  SET res = %s, status = 'end'
+  SET res = %s::round_result_enum, status = 'checking'::round_status_enum
   WHERE r_id = %s AND e_id = %s
   """
   success, rowcount = execute_query(query, (res, r_id, event_id))
   if success and (rowcount > 0):
     return True, res
   return False, ''
+
+def check_round(event_id, r_id):
+  query = """
+  UPDATE round
+  SET status = 'end'::round_status_enum
+  WHERE r_id = %s AND e_id = %s and status = 'checking';
+  """
+  success, rowcount = execute_query(query, (r_id, event_id))
+  if success and (rowcount > 0):
+    print(f"Checking eventId : {event_id}, roundId : {r_id} successfully", flush=True)
+    return True
+  print(f"Checking eventId : {event_id}, roundId : {r_id} failed", flush=True)
+  return False

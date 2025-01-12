@@ -1,0 +1,43 @@
+.h2 {
+  margin: 0;
+  padding: 0;
+  justify-self: center;
+}
+
+.h3 {
+  margin: 0;
+  padding: 0;
+  justify-self: center;
+}
+
+.contentContainer {
+  margin: 0;
+  padding: 0;
+  justify-self: center;
+  background-color: lightyellow;
+}
+
+.voteButton {
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: var(--buttom-color);
+  background-color: var(--buttom-background);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.voteButton:hover {
+  background-color: var(--buttom-hover); /* 按鈕 hover 時的顏色 */
+}
+
+.voteButton:active {
+  background-color: var(--buttom-active); /* 按鈕按下時的顏色 */
+}
+
+.voteButton:disabled {
+  background-color: var(--buttom-dsiable);
+  cursor: not-allowed;
+}
+

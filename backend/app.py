@@ -9,12 +9,15 @@ from manage.rounds import get_rounds, get_players, create_single_round, start_ro
                             get_status
 
 
+
 FRONTEND_URL = "http://localhost:5173"
 
 app = Flask(__name__)
 CORS(app)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, cors_allowed_origins="*")
+
+import Socketio.voting
 
 @socketio.on('request_rounds')
 def handle_get_rounds(data):
@@ -50,7 +53,7 @@ def handle_create_1on1(data):
         rounds = get_rounds(event_id)
         if rounds is not None:
             emit('response_round', rounds, broadcast=False)
-            
+              
 @socketio.on('request_start_round')
 def handle_start_round(data):
     event_id = data.get('eventId')
@@ -63,10 +66,11 @@ def handle_start_round(data):
             emit('response_round', rounds, broadcast=False)
             round = {}
             for rd in rounds:
-                if rd['r_id'] == r_id:
+                if str(rd['r_id']) == str(r_id):
                     round = rd | { 'battling' : True }
                     break    
             emit('inform_event_status', round, to=event_id)
+            print(f"emit from start round to inform : {round}", flush=True)
 
 @socketio.on('request_stop_round')
 def handle_stop_round(data):
@@ -80,11 +84,14 @@ def handle_stop_round(data):
             emit('response_round', rounds, broadcast=False)
             round = {}
             for rd in rounds:
-                if rd['r_id'] == r_id:
+                if str(rd['r_id']) == str(r_id):
                     round = rd | { 'battling' : False }
                     break    
             emit('inform_event_status', round, to=event_id)
+            print(f"emit from stop round to inform : {round}", flush=True)
 
+
+    
             
 # 同個活動的參賽者會分配到同個 room
 @socketio.on('request_join')
@@ -113,9 +120,8 @@ def on_leave(data):
 def handle_event_status(data):
     e_id = data['eventId']
     res = get_status(e_id)
-    print(f"client request event status", flush=True)
     emit('inform_event_status', res, broadcast=False)
-
+    print(f"emit from request status to inform : {res}", flush=True)
 
 @app.route('/sign_up', methods=['POST'])
 def handle_sign_up():

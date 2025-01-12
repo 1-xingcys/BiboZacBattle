@@ -7,8 +7,8 @@ from events.single_battle import create_single_battle, get_single_battle, end_si
                                     vote_single_battle, enter_single_battle
 from events.seven_to_smoke import create_seven_to_smoke
 from events.rounds import get_rounds, get_players, create_single_round, start_round, stop_round
-from manage.player import generate_verification_code, add_player, get_player
-from manage.event_info import get_event, add_event, delete_player
+from manage.player import generate_verification_code, add_player, get_player, delete_player
+from manage.event_info import get_event, add_event
 
 
 FRONTEND_URL = "http://localhost:5173"

@@ -101,8 +101,18 @@ function OrganizerDashboard() {
                 >
                   {event.name}
                 </a>
-                <p>Date: {event.date}</p>
-                <p>Status: {event.champ_name === null ? '進行中' : '已完成'}</p>
+                <p>Date：{event.date}</p>
+                <p>Status：{event.champ_name === null ? '進行中' : '已完成'}</p>
+                <p>
+                  活動網址：
+                  <a
+                    href={`http://localhost:5173/participant/${event.e_id}/${event.name}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    http://localhost:5173/participant/{event.e_id}/{event.name}
+                  </a>
+                </p>
                 <button onClick={() => handlePlayer(event.e_id, event.name)}>管理參賽者</button>
               </div>
             ))}

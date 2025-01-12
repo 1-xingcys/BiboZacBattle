@@ -4,9 +4,10 @@ from flask_cors import CORS
 from flask_socketio import emit
 
 from manage.rounds import get_rounds, get_players, create_single_round, start_round, stop_round, \
-                            get_status, vote_round, compute_result, check_round
+                            get_status
 from manage.player import generate_verification_code, add_player, authentication
 from manage.event_info import get_event, add_event
+
 
 
 FRONTEND_URL = "http://localhost:5173"
@@ -15,6 +16,8 @@ app = Flask(__name__)
 CORS(app)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, cors_allowed_origins="*")
+
+import Socketio.voting
 
 @socketio.on('request_rounds')
 def handle_get_rounds(data):
@@ -87,53 +90,7 @@ def handle_stop_round(data):
             emit('inform_event_status', round, to=event_id)
             print(f"emit from stop round to inform : {round}", flush=True)
 
-# 開始開放投票
-@socketio.on('request_vote_round')
-def handle_start_vote_round(data):
-    event_id = data.get('eventId')
-    r_id = data.get('roundId')
-    res = vote_round(event_id, r_id)
-    if res:
-        emit('response_vote_round', res, broadcast=False)
-        rounds = get_rounds(event_id)
-        if rounds is not None:
-            round = {}
-            for rd in rounds:
-                print(f"rd['r_id'] = {rd['r_id']} type = {type(rd['r_id'])} type r_id = {r_id} {type(r_id)}", flush=True)
-                if str(rd['r_id']) == str(r_id):
-                    print(f"find round {r_id}", flush=True)
-                    round = rd | { 'battling' : True }
-                    break    
-            emit('inform_event_status', round, to=event_id)
-            print(f"emit from start vote to inform : {round}", flush=True)
-   
-# 結算投票     
-@socketio.on('request_compute_vote')
-def handle_compute_vote(data):
-    event_id = data.get('eventId')
-    r_id = data.get('roundId')
-    isSuccess, res = compute_result(event_id, r_id)
-    emit('response_compute_vote', {'isSuccess' : True, 'result' : res} if isSuccess else {'isSuccess' : False}, broadcast=False)
-    rounds = get_rounds(event_id)
-    if rounds is not None:
-        round = {}
-        for rd in rounds:
-            if str(rd['r_id']) == str(r_id):
-                round = rd | { 'battling' : True }
-                break    
-        emit('inform_event_status', round, to=event_id)
-        print(f"emit from compute vote to inform : {round}", flush=True)
-    
-@socketio.on('request_check_round_result')
-def handle_check_round_result(data):
-    event_id = data.get('eventId')
-    r_id = data.get('roundId')
-    res = check_round(event_id, r_id)
-    if res:
-        emit('response_check_round_result', res, broadcast=False)
-        round = get_status(event_id)
-        emit('inform_event_status', round, to=event_id)
-        print(f"emit from check round to inform : {round}", flush=True)
+
     
             
 # 同個活動的參賽者會分配到同個 room

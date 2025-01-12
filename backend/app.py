@@ -3,10 +3,10 @@ from flask_socketio import SocketIO, join_room, leave_room
 from flask_cors import CORS
 from flask_socketio import emit
 
+from manage.player import generate_verification_code, add_player, get_player, delete_player, authenticationj
+from manage.event_info import get_event, add_event
 from manage.rounds import get_rounds, get_players, create_single_round, start_round, stop_round, \
                             get_status
-from manage.player import generate_verification_code, add_player, authentication, get_player, delete_player
-from manage.event_info import get_event, add_event
 
 
 FRONTEND_URL = "http://localhost:5173"

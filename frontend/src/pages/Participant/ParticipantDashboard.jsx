@@ -43,16 +43,24 @@ function ParticipantDashboard() {
     <div>
       <h2>{eventName}</h2>
       <h3>您好！{user.username}</h3>
-      {curRound.battling && 
-        <div>
+      <div>
+        {curRound.battling && 
           <p>{`${curRound.red_name} v.s ${curRound.blue_name}`}</p>
-          <p>{curRound.status === 'inProgress' ? '激烈對戰中' : '投票中'}</p>
-        </div>
-      }
+        }
+        <p>{RenderStatus({ curRound })}</p>
+      </div>
       <button onClick={handleLogout}>Logout</button>
     </div>
 
   );
+}
+
+function RenderStatus({ curRound }) {
+  if(!curRound.battling) return '等待對戰開始...';
+  else if(curRound.status === 'inProgress') return '對戰中';
+  else if(curRound.status === 'voting') return '投票中';
+  else if(curRound.status === 'checking') return '投票完成，等待確認中...';
+  else return '不知道';
 }
 
 export default ParticipantDashboard;

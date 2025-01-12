@@ -33,14 +33,15 @@ CREATE TABLE events (
 );
 
 CREATE TABLE player (
-    name VARCHAR(255) NOT NULL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
     veri_code INT NOT NULL,
     e_id INT NOT NULL,
+    PRIMARY KEY (name, e_id),
     FOREIGN KEY (e_id) REFERENCES events(id)
 );
 
 CREATE TYPE round_result_enum AS ENUM ('red', 'blue', 'tie', 'nan');
-CREATE TYPE round_status_enum AS ENUM ('inProgress', 'voting', 'end', 'new');
+CREATE TYPE round_status_enum AS ENUM ('inProgress', 'voting', 'checking', 'end', 'new');
 CREATE TABLE round (
     r_id SERIAL NOT NULL,
     e_id INT NOT NULL,
@@ -61,7 +62,7 @@ CREATE TABLE vote (
     e_id INT NOT NULL,
     side vote_result_enum NOT NULL,
     PRIMARY KEY (p_name, r_id, e_id), -- 主鍵更新為包含 e_id
-    FOREIGN KEY (p_name) REFERENCES player(name),
+    FOREIGN KEY (p_name, e_id) REFERENCES player(name, e_id),
     FOREIGN KEY (r_id, e_id) REFERENCES round(r_id, e_id) -- 設置複合外鍵
 );
 

@@ -15,7 +15,7 @@ function ManageEvent() {
 
 
   // 確定是否有 "inProgress" 的 round
-  const isInProgress = rounds.some((round) => round.status === 'inProgress');
+  const isInProgress = rounds.some((round) => round.status === 'inProgress' || round.status === 'voting');
 
   useEffect(() => {
     socket.on('response_join', (data) => {
@@ -134,16 +134,16 @@ function ManageEvent() {
 }
 
 function renderButtons(round, eventId, isInProgress, handleStart, handleStop, handleManage) {
-  if (round.status === 'inProgress') {
+  if (round.status === 'inProgress' || round.status === 'voting') {
     return (
       <div className={styles.cardButtonGroup}>
         {/* 暫停按鈕 */}
-        <button
+        {round.status === 'inProgress' && <button
           className={styles.cardButton}
           onClick={() => handleStop(round.r_id, eventId)}
         >
           取消
-        </button>
+        </button>}
 
         {/* 管理按鈕 */}
         <button

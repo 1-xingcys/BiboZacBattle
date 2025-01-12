@@ -74,16 +74,16 @@ function OrganizerDashboard() {
 
       {/* Create New Event */}
       <div style={{ marginBottom: '30px' }}>
-        <h2>Create New Event</h2>
+        <h2>新增活動</h2>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <input
             type="text"
-            placeholder="Enter event name"
+            placeholder="輸入活動名稱"
             value={eventName}
             onChange={(e) => setEventName(e.target.value)}
           />
           <button onClick={createEvent} disabled={creating}>
-            {creating ? 'Creating...' : 'Create'}
+            {creating ? 'Creating...' : '新增'}
           </button>
         </div>
         {errorMessage && <p style={{ color: 'red', marginTop: '10px' }}>{errorMessage}</p>}
@@ -91,7 +91,7 @@ function OrganizerDashboard() {
 
       {/* Event List */}
       <div>
-        <h2>Event List</h2>
+        <h2>管理活動</h2>
         {Array.isArray(eventList) && eventList.length > 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
             {eventList.map((event, index) => (
@@ -101,8 +101,8 @@ function OrganizerDashboard() {
                 >
                   {event.name}
                 </a>
-                <p>Date：{event.date}</p>
-                <p>Status：{event.champ_name === null ? '進行中' : '已完成'}</p>
+                <p>舉辦日期：{event.date}</p>
+                <p>狀態：{event.champ_name === null ? '進行中' : '已完成'}</p>
                 <p>
                   活動網址：
                   <a
@@ -118,14 +118,14 @@ function OrganizerDashboard() {
             ))}
           </div>
         ) : (
-          <p>No events available.</p>
+          <p>開始你的第一個活動😍</p>
         )}
       </div>
 
       {/* Logout Button */}
       <div>
         <button className="logout-button" onClick={handleLogout}>
-          Logout
+          登出
         </button>
       </div>
     </div>

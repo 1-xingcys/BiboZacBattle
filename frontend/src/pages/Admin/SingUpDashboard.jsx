@@ -5,7 +5,7 @@ import socket from '../../socket';
 
 function SignUpDashboard() {
   const navigate = useNavigate();
-  const { eventId } = useParams();
+  const { eventId, eventName } = useParams();
   const [errorMessage, setErrorMessage] = useState("");
   const [rows, setRows] = useState([]); // 初始化為空表格
   const [inputName, setInputName] = useState(""); // 單獨的輸入欄位
@@ -68,9 +68,9 @@ function SignUpDashboard() {
 
   return (
     <div>
-      <h1>Sign Up Dashboard</h1>
-      <h2>Event Id: {eventId}</h2>
-      <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
+      <h1>報名表格</h1>
+      <h2>活動名稱：{eventName}</h2>
+      <h2>活動編號：{eventId}</h2>
 
       {/* 姓名/綽號輸入欄 */}
       <div style={{ marginBottom: '20px' }}>
@@ -78,15 +78,17 @@ function SignUpDashboard() {
           type="text"
           value={inputName}
           onChange={(e) => setInputName(e.target.value)}
-          placeholder="Enter name/nickname"
+          placeholder="輸入名字／綽號"
           style={{ padding: '10px', fontSize: '16px', width: '300px' }}
         />
         <button
           onClick={handleAddRow}
-          style={{ padding: '10px 20px', fontSize: '16px', marginLeft: '10px' }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
         >
-          Enter
-        </button>
+          <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#5f6368">
+            <path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/>
+          </svg>
+          </button>
       </div>
 
       {/* 表格 */}
@@ -94,9 +96,9 @@ function SignUpDashboard() {
         <thead>
           <tr>
             <th style={{ border: '1px solid black', padding: '8px' }}>#</th>
-            <th style={{ border: '1px solid black', padding: '8px' }}>Name</th>
-            <th style={{ border: '1px solid black', padding: '8px' }}>Verification Code</th>
-            <th style={{ border: '1px solid black', padding: '8px' }}>Delete</th>
+            <th style={{ border: '1px solid black', padding: '8px' }}>名字／綽號</th>
+            <th style={{ border: '1px solid black', padding: '8px' }}>驗證碼</th>
+            <th style={{ border: '1px solid black', padding: '8px' }}>刪除</th>
           </tr>
         </thead>
         <tbody>
@@ -124,8 +126,13 @@ function SignUpDashboard() {
 
       {/* 開始按鈕 */}
       <div style={{ marginTop: '20px' }}>
-        <button onClick={handleStart} style={{ padding: '10px 20px', fontSize: '16px' }}>
-          Start
+        <button 
+          onClick={handleStart} 
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#5f6368">
+            <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/>
+          </svg>
         </button>
       </div>
     </div>

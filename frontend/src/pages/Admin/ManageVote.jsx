@@ -2,19 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import socket from '../../socket';
 import styles from './ManageEvent.module.css';
+import RoundLive from '../Component/RoundLive';
 
 function ManageVote() {
   const { eventId, roundId, eventName } = useParams();
   const navigate = useNavigate();
   const [roundStatus, setRoundStatus] = useState({});
+  const [curVotes, setCurVotes] = useState(null);
 
   useEffect(() => {
     socket.on('inform_event_status', (data) => {
       console.log(data);
       setRoundStatus(data);
+      if(data.res !== "new" && data.res !== "end"){
+        socket.emit('request_vote_status', {eventId, roundId});
+      }
+    });
+    socket.on('response_vote_status', (data) => {
+      console.log('get vote status: ', data);
+      setCurVotes(data);
     });
 
     return () => {
+      socket.off('response_vote_status');
       socket.off('inform_event_status');
       socket.off('response_vote_round');
       socket.off('response_compute_vote');
@@ -100,6 +110,8 @@ function ManageVote() {
             下一個
         </button>
       </div>
+
+      <RoundLive curRound={roundStatus} curVotes={curVotes}/>
     </div>
   );
 }

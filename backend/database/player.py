@@ -1,6 +1,6 @@
 import random
 import datetime
-from models.db_utils import connect_to_database, execute_select_query, execute_query
+from database.utils import connect_to_database, execute_select_query, execute_query
 
 # 全局變量存儲當天生成的數字集合
 generated_numbers = set()
@@ -20,12 +20,12 @@ def generate_verification_code(name):
 
 def add_player(p_name, veri_code, e_id):
     query = """
-    INSERT INTO player (name, veri_code, e_id)
-    VALUES (%s, %s, %s)
+    INSERT INTO player (name, veri_code, e_id, online)
+    VALUES (%s, %s, %s, false)
     """
     success, rowcount = execute_query(query, (p_name, veri_code, e_id))
     if success and rowcount > 0:
-        print(f"{p_name} player added successfully")
+        print(f"[DATABASE] {p_name} player added successfully")
         return True
     return False
 
@@ -52,9 +52,23 @@ def delete_player(e_id, p_name):
     """
     success, rowcount = execute_query(query, (e_id, p_name))
     if success and rowcount > 0:
-        print(f"{p_name} player deleted successfully")
+        print(f"[DATABASE] {p_name} player deleted successfully")
         return True
     return False
+
+def get_online_player(e_id):
+    query = """
+    SELECT name
+    FROM player
+    WHERE e_id = %s AND online = TRUE
+    """
+    res = execute_select_query(query, (e_id, ))
+
+    formatted_results = []
+    for row in res:
+        p_name = row
+        formatted_results.append({ 'p_name': p_name })
+    return formatted_results
 
 def authentication(veri_code, e_id):
     query = """
@@ -64,6 +78,6 @@ def authentication(veri_code, e_id):
     """
     rows = execute_select_query(query, (veri_code, e_id))
     if rows:
-        print(f"Player {rows[0][0]} in event {e_id} login")
+        print(f"[DATABASE] Player {rows[0][0]} in event {e_id} login")
         return rows[0][0]
     return ""

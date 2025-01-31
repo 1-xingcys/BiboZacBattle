@@ -11,7 +11,7 @@ def connect_to_database():
             conn = psycopg2.connect(DATABASE_URL)
             return conn
         except psycopg2.OperationalError:
-            print("Database not ready, retrying in 3 seconds...", flush=True)
+            print("[DATABASE] Database not ready, retrying in 3 seconds...", flush=True)
             time.sleep(3)
     raise Exception("Database connection failed after retries")
 
@@ -24,11 +24,11 @@ def execute_query(query, data):
         cur.execute(query, data)
         rowcount = cur.rowcount
         conn.commit()
-        print(f"Query executed successfully {rowcount} rows are affected", flush=True)
+        print(f"[DATABASE] Query executed successfully {rowcount} rows are affected", flush=True)
         return True, rowcount
     except Exception as e:
         conn.rollback()
-        print(f"Failed to execute query with data{data}: {e}", flush=True)
+        print(f"[DATABASE] Failed to execute query with data{data}: {e}", flush=True)
         return False, 0
     finally:
         cur.close()
@@ -46,7 +46,7 @@ def execute_select_query(query, data=None):
         results = cur.fetchall()
         return results
     except Exception as e:
-        print(f"Failed to execute select query: {e}", flush=True)
+        print(f"[DATABASE] Failed to execute select query: {e}", flush=True)
         return []
     finally:
         cur.close()

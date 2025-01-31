@@ -9,6 +9,10 @@
   --buttom-dsiable : #ccc;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  }
 
 /* Shared Decoration */
 label {

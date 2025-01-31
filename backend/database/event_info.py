@@ -1,6 +1,6 @@
 import random
 from datetime import date
-from models.db_utils import connect_to_database, execute_select_query, execute_query
+from database.utils import connect_to_database, execute_select_query, execute_query
 
 def get_event(a_id):
     query = """
@@ -37,7 +37,7 @@ def add_event(name, a_id):
     """
     
     success, rowcount = execute_query(query_add, (name, a_id))
-    print(f"insert events {name} {success}!\n")
+    print(f"[DATABASE] insert events {name} {success}!\n")
     if success and rowcount > 0:
         res = execute_select_query(query_select, (name, a_id))
         if res and len(res) > 0:

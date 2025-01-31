@@ -1,4 +1,4 @@
-from models.db_utils import connect_to_database
+from database.utils import connect_to_database
 
 # Create tables using a SQL string
 def create_tables(create_table_query):
@@ -37,7 +37,8 @@ CREATE TABLE player (
     veri_code INT NOT NULL,
     e_id INT NOT NULL,
     PRIMARY KEY (name, e_id),
-    FOREIGN KEY (e_id) REFERENCES events(id)
+    FOREIGN KEY (e_id) REFERENCES events(id),
+    online BOOLEAN NOT NULL
 );
 
 CREATE TYPE round_result_enum AS ENUM ('red', 'blue', 'tie', 'nan');
@@ -74,14 +75,14 @@ VALUES ('admin', 'admin');
 INSERT INTO events (name, date, a_id, champ_name)
 VALUES ('Annual Dance Battle', '2025-01-06', 'admin', null);
 
-INSERT INTO player (name, veri_code, e_id)
+INSERT INTO player (name, veri_code, e_id, online)
 VALUES 
-    ('Player1', 1234, 1),
-    ('Player2', 5678, 1),
-    ('Player3', 9101, 1),
-    ('Player4', 1121, 1),
-    ('Player5', 3141, 1),
-    ('Player6', 5161, 1);
+    ('Player1', 1234, 1, FALSE),
+    ('Player2', 5678, 1, FALSE),
+    ('Player3', 9101, 1, FALSE),
+    ('Player4', 1121, 1, FALSE),
+    ('Player5', 3141, 1, FALSE),
+    ('Player6', 5161, 1, FALSE);
 INSERT INTO round (e_id, datetime, red_name, blue_name, res, type)
 VALUES 
     (1, '2025-01-06 14:00:00', 'Player1', 'Player2', 'red', 'Best16'),

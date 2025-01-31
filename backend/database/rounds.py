@@ -1,4 +1,4 @@
-from models.db_utils import execute_select_query, execute_query, connect_to_database
+from database.utils import execute_select_query, execute_query, connect_to_database
 from datetime import datetime
 
 """
@@ -95,9 +95,9 @@ def start_round(event_id, r_id):
   """
   success, rowcount = execute_query(query, (r_id, event_id))
   if success and (rowcount > 0):
-    print(f"Start eventId : {event_id}, roundId : {r_id} successfully", flush=True)
+    print(f"[DATABASE] Start eventId : {event_id}, roundId : {r_id} successfully", flush=True)
     return True
-  print(f"Start eventId : {event_id}, roundId : {r_id} failed", flush=True)
+  print(f"[DATABASE] Start eventId : {event_id}, roundId : {r_id} failed", flush=True)
   return False
 
 def stop_round(event_id, r_id):
@@ -111,12 +111,17 @@ def stop_round(event_id, r_id):
   """
   success, rowcount = execute_query(query, (r_id, event_id))
   if success and (rowcount > 0):
-    print(f"Stop eventId : {event_id}, roundId : {r_id} successfully", flush=True)
+    print(f"[DATABASE] Stop eventId : {event_id}, roundId : {r_id} successfully", flush=True)
     return True
-  print(f"Stop eventId : {event_id}, roundId : {r_id} failed", flush=True)
+  print(f"[DATABASE] Stop eventId : {event_id}, roundId : {r_id} failed", flush=True)
   return False
 
 def vote_round(event_id, r_id):
+  clean_query = """
+  DELETE FROM vote WHERE r_id = %s AND e_id = %s;
+  """
+  execute_query(clean_query, (r_id, event_id))
+  
   query = """
   UPDATE round
   SET status = 'voting'::round_status_enum
@@ -129,7 +134,7 @@ def vote_round(event_id, r_id):
   
 def player_vote(event_id, r_id, p_name, side):
   if side != 'red' and side != 'blue' and side != 'tie':
-    print("Invalid value of side:", side, flush=True)
+    print("[DATABASE] Invalid value of side:", side, flush=True)
     return False
     
   query = """
@@ -138,10 +143,38 @@ def player_vote(event_id, r_id, p_name, side):
   """
   success, rowcount = execute_query(query, (p_name, r_id, event_id, side))
   if success and (rowcount > 0):
-    print(f"Player {p_name} vote {side} at eventId : {event_id}, roundId : {r_id} successfully", flush=True)
+    print(f"[DATABASE] Player {p_name} vote {side} at eventId : {event_id}, roundId : {r_id} successfully", flush=True)
     return True
-  print(f"Player {p_name} vote {side} at eventId : {event_id}, roundId : {r_id} failed", flush=True)
+  print(f"[DATABASE] Player {p_name} vote {side} at eventId : {event_id}, roundId : {r_id} failed", flush=True)
   return False
+
+def is_player_voted(event_id, r_id, p_name):
+  query = """
+  SELECT p_name
+  FROM vote
+  WHERE e_id = %s AND r_id = %s AND p_name = %s
+  """
+  rows = execute_select_query(query, (event_id, r_id, p_name))
+  if rows:
+    return True
+  return False
+
+def vote_status(event_id, r_id):
+  query = """
+  SELECT p_name, side
+  FROM vote
+  WHERE r_id = %s AND e_id = %s;
+  """
+  rows = execute_select_query(query, (r_id, event_id))
+  formatted_results = []
+  for row in rows:
+      p_name, side = row
+      formatted_results.append({
+        'p_name' : p_name,
+        'side' : side
+      })
+  
+  return formatted_results
   
 def compute_result(event_id, r_id):
   query = """
@@ -156,13 +189,13 @@ def compute_result(event_id, r_id):
   GROUP BY r_id, e_id;
   """
   rows = execute_select_query(query, (r_id, event_id))
-  print(f"From compute_result: rows = {rows}", flush=True)
+  print(f"[DATABASE] From compute_result: rows = {rows}", flush=True)
   if rows:
     _, __, red_votes, blue_votes, tie_votes = rows[0]
   else :
     red_votes, blue_votes, tie_votes = 0,0,0
     
-  print(f"Compute Result e_id = {event_id}, r_id = {r_id}\n red : {red_votes}, blue : {blue_votes}, tie : {tie_votes}", flush=True)
+  print(f"[DATABASE] Compute Result e_id = {event_id}, r_id = {r_id}\n red : {red_votes}, blue : {blue_votes}, tie : {tie_votes}", flush=True)
   
   res = ''
   if tie_votes * 1.25 > (red_votes + blue_votes + tie_votes):
@@ -192,7 +225,7 @@ def check_round(event_id, r_id):
   """
   success, rowcount = execute_query(query, (r_id, event_id))
   if success and (rowcount > 0):
-    print(f"Checking eventId : {event_id}, roundId : {r_id} successfully", flush=True)
+    print(f"[DATABASE] Checking eventId : {event_id}, roundId : {r_id} successfully", flush=True)
     return True
-  print(f"Checking eventId : {event_id}, roundId : {r_id} failed", flush=True)
+  print(f"[DATABASE] Checking eventId : {event_id}, roundId : {r_id} failed", flush=True)
   return False

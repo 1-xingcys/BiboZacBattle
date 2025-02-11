@@ -7,8 +7,8 @@ import RoundLive from '../Component/RoundLive';
 function ManageVote() {
   const { eventId, roundId, eventName } = useParams();
   const navigate = useNavigate();
-  const [roundStatus, setRoundStatus] = useState({});
-  const [curVotes, setCurVotes] = useState(null);
+  const [ roundStatus, setRoundStatus ] = useState({});
+  const [ curVotes, setCurVotes ] = useState(null);
 
   useEffect(() => {
     socket.on('inform_event_status', (data) => {
@@ -19,8 +19,20 @@ function ManageVote() {
       }
     });
     socket.on('response_vote_status', (data) => {
-      console.log('get vote status: ', data);
-      setCurVotes(data);
+      setRoundStatus((prevRoundStatus) => {
+        if (Object.keys(prevRoundStatus).length !== 0) {
+          var filtered = data.filter((player) =>
+            player.p_name !== prevRoundStatus.red_name &&
+            player.p_name !== prevRoundStatus.blue_name
+          );
+          console.log("get vote status: ", filtered, data, prevRoundStatus);
+          setCurVotes(filtered);
+        } else {
+          console.log("roundStatus is still empty, delaying processing...");
+          setTimeout(() => socket.emit("request_vote_status", { eventId, roundId }), 100);
+        }
+        return prevRoundStatus;
+      });
     });
 
     return () => {

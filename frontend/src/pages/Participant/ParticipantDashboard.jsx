@@ -4,13 +4,14 @@ import { useAuth } from '../../context/AuthContext';
 import socket from '../../socket';
 import MenuBar from './Component/MenuBar';
 import RoundLive from '../Component/RoundLive';
+import { offline } from '../../Api/player';
 
 function ParticipantDashboard() {
+  
   const { eventId, eventName } = useParams();
-  const [ errorMessage, SetErrorMessage ] = useState("");
   const { user, logout } = useAuth();
-  const [ curRound, setCurRound] = useState('');
-  const [curVotes, setCurVotes] = useState(null);
+  const [ curRound, setCurRound ] = useState('');
+  const [ curVotes, setCurVotes ] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,11 +42,16 @@ function ParticipantDashboard() {
     };
   }, []);
 
-  const handleLogout = (e) => {
+  const handleLogout = async (e) => {
     e.preventDefault();
     socket.emit('request_leave', { eventId });
-    logout();
-    navigate(`/participant/${eventId}/${eventName}`);
+    try {
+      await offline(eventId, user.username);
+      logout();
+      navigate(`/participant/${eventId}/${eventName}`);
+    } catch (error){
+      alert(`Logout FAIL: ${error}`);
+    }
   };
 
   if (!user) return null; // 防止未登入時直接訪問

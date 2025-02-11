@@ -1,7 +1,7 @@
 from flask_socketio import emit
 
 from database.rounds import get_rounds, get_players
-from database.player import delete_player, get_player
+from database.player import delete_player
 
 from __main__ import socketio
 
@@ -18,15 +18,6 @@ def handle_get_players(data):
     players = get_players(event_id)
     if players is not None:
         emit('response_players', players, broadcast=False)
-        
-@socketio.on('get_player')
-def get_player_info(data):
-    e_id = data.get('eventId')
-    res = get_player(e_id)
-    if res:
-        emit('response_player_info', res, broadcast=False)
-    else:
-        emit('response_player_info', [], broadcast=False)
 
 @socketio.on('delete_player_info')
 def delete_player_info(data):

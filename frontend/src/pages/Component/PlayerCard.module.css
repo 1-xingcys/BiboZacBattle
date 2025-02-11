@@ -1,0 +1,30 @@
+.player-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 10px;
+}
+
+.player-card {
+  width: 100%;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  font-weight: bold;
+  transition: 0.3s ease-in-out;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.online {
+  background-color: #4CAF50; /* 綠色 */
+  color: white;
+}
+
+.offline {
+  background-color: #d3d3d3; /* 淺灰色 */
+  color: #666;
+  opacity: 0.6; /* 類似禁用按鈕 */
+}

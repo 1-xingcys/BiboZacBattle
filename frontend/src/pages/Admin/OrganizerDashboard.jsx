@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { get_event_info, create_new_event } from '../../Api/event';
-import './OrganizerDashboardCSS.css'; // 匯入 CSS
+import { get_event_info, create_new_event, delete_event } from '../../Api/event';
+import styles from './OrganizerDashboard.module.css'; // 匯入 CSS
 
 function OrganizerDashboard() {
   const { user, logout } = useAuth();
@@ -58,6 +58,11 @@ function OrganizerDashboard() {
     }
   };
 
+  const deleteEvent = async (eventId) => {
+    await delete_event(eventId);
+    await getEventInfo();
+  }
+
   const handlePlayer = (e_id, e_name) => {
     navigate(`/sign-up-dashboard/${e_id}/${e_name}`);
   };
@@ -73,21 +78,28 @@ function OrganizerDashboard() {
       <h1>Organizer Dashboard</h1>
 
       {/* Create New Event */}
-      <div style={{ marginBottom: '30px' }}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault(); // 防止頁面重新載入
+          createEvent();
+        }}
+        style={{ marginBottom: "30px" }}
+      >
         <h2>新增活動</h2>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: "flex", alignItems: "center" }}>
           <input
             type="text"
             placeholder="輸入活動名稱"
             value={eventName}
             onChange={(e) => setEventName(e.target.value)}
           />
-          <button onClick={createEvent} disabled={creating}>
-            {creating ? 'Creating...' : '新增'}
+          <button type="submit" disabled={creating}>
+            {creating ? "Creating..." : "新增"}
           </button>
         </div>
-        {errorMessage && <p style={{ color: 'red', marginTop: '10px' }}>{errorMessage}</p>}
-      </div>
+        {errorMessage && <p style={{ color: "red", marginTop: "10px" }}>{errorMessage}</p>}
+      </form>
+
 
       {/* Event List */}
       <div>
@@ -95,7 +107,7 @@ function OrganizerDashboard() {
         {Array.isArray(eventList) && eventList.length > 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
             {eventList.map((event, index) => (
-              <div className="event-card" key={index}>
+              <div className={styles.event_card} key={index}>
                 <a
                   href={`/organizer/event/${event.e_id}/${event.name}`}
                 >
@@ -114,6 +126,7 @@ function OrganizerDashboard() {
                   </a>
                 </p>
                 <button onClick={() => handlePlayer(event.e_id, event.name)}>管理參賽者</button>
+                <button onClick={() => deleteEvent(event.e_id)}>刪除活動</button>
               </div>
             ))}
           </div>
@@ -124,7 +137,7 @@ function OrganizerDashboard() {
 
       {/* Logout Button */}
       <div>
-        <button className="logout-button" onClick={handleLogout}>
+        <button className={styles.logout_buttom} onClick={handleLogout}>
           登出
         </button>
       </div>

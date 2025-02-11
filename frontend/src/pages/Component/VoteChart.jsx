@@ -11,11 +11,15 @@ const VoteChart = ({ votes, curRound }) => {
   // 計算投票數量
   const voteCount = { blue: 0, red: 0, tie: 0 };
   const voteDetails = { blue: [], red: [], tie: [] };
+  const playerHasNotVote = [];
 
-  votes.forEach(({ p_name, side }) => {
+  votes.forEach(({ p_name, online, side }) => {
     if (voteCount[side] !== undefined) {
       voteCount[side]++;
       voteDetails[side].push(p_name);
+    }
+    else if (side === 'empty' && online) {
+      playerHasNotVote.push(p_name);
     }
   });
 
@@ -90,6 +94,22 @@ const VoteChart = ({ votes, curRound }) => {
                 </tr>
               ))
             )}
+          </tbody>
+        </table>
+      </div>
+      <div className={styles.tableContainer}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>未投票</th>
+            </tr>
+          </thead>
+          <tbody>
+            {playerHasNotVote.map((p_name, index) => (
+              <tr key={index}>
+                <td>{p_name}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

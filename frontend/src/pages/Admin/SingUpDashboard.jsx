@@ -12,13 +12,13 @@ function SignUpDashboard() {
 
   // 函式：自動載入參賽者資料
   const manage = (eventId) => {
-    socket.off('response_player_info'); // 確保不重複綁定事件
-    socket.emit('get_player', { eventId: eventId });
+    socket.off('response_players'); // 確保不重複綁定事件
+    socket.emit('request_players', { eventId: eventId });
 
-    socket.on('response_player_info', (data) => {
+    socket.on('response_players', (data) => {
       console.log(`Event ${eventId} players:`, data);
       const formattedRows = data.map((player, index) => ({
-        name: player.p_name,
+        name: player.name,
         verificationCode: player.veri_code,
       }));
       setRows(formattedRows); // 更新表格內容
@@ -74,21 +74,29 @@ function SignUpDashboard() {
 
       {/* 姓名/綽號輸入欄 */}
       <div style={{ marginBottom: '20px' }}>
-        <input
-          type="text"
-          value={inputName}
-          onChange={(e) => setInputName(e.target.value)}
-          placeholder="輸入名字／綽號"
-          style={{ padding: '10px', fontSize: '16px', width: '300px' }}
-        />
-        <button
-          onClick={handleAddRow}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault(); // 防止頁面重新載入
+            handleAddRow();
+          }}
+          style={{ display: "flex", alignItems: "center", gap: "10px" }}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#5f6368">
-            <path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/>
-          </svg>
+          <input
+            type="text"
+            value={inputName}
+            onChange={(e) => setInputName(e.target.value)}
+            placeholder="輸入名字／綽號"
+            style={{ padding: "10px", fontSize: "16px", width: "300px" }}
+          />
+          <button
+            type="submit" // 設定為提交按鈕
+            style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#5f6368">
+              <path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z" />
+            </svg>
           </button>
+        </form>
       </div>
 
       {/* 表格 */}
@@ -126,12 +134,12 @@ function SignUpDashboard() {
 
       {/* 開始按鈕 */}
       <div style={{ marginTop: '20px' }}>
-        <button 
-          onClick={handleStart} 
+        <button
+          onClick={handleStart}
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
         >
           <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#5f6368">
-            <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z"/>
+            <path d="m313-440 224 224-57 56-320-320 320-320 57 56-224 224h487v80H313Z" />
           </svg>
         </button>
       </div>

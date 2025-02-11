@@ -1,9 +1,12 @@
 from flask import Flask, request, jsonify, Blueprint
 
 from database.player import generate_verification_code, add_player, authentication
-from database.event_info import get_event, add_event
+from database.event_info import get_event, add_event, delete_event
 
 event_handler_bp = Blueprint('event_handler', __name__)
+
+from flask_socketio import emit
+from __main__ import socketio
 
 @event_handler_bp.route('/sign_up', methods=['POST'])
 def handle_sign_up():
@@ -48,14 +51,15 @@ def create_new_event():
     if res:
         return jsonify(res), 200
     else:
-        return jsonify({"error": "Failed to create event"}), 500
-
-@event_handler_bp.route('/player/login', methods=['POST'])
-def player_login():
-    data = request.json
-    e_id = data.get('e_id')
-    veri_code = data.get('veri_code')
-    name = authentication(veri_code, e_id)
-    if name:
-        return jsonify({'name': name}), 200
-    return jsonify({'error': 'invalid verification code'}), 403
+        return jsonify({"error": "Failed to create event"}), 404
+      
+# admin delete an event
+@event_handler_bp.route('/delete_event', methods=['DELETE'])
+def handle_delete_event():
+  data = request.json
+  e_id = data.get('eventId')
+  res = delete_event(e_id)
+  if res:
+    return jsonify(res), 200
+  else:
+    return jsonify({"error" : "Failed to delete event"}), 404

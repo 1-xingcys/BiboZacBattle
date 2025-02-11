@@ -55,3 +55,13 @@ export const create_new_event = async (name, a_id) => {
     throw error;
   }
 }
+
+export const delete_event = async (eventId) => {
+  try {
+    const response = await apiCall(`/delete_event`, "DELETE", { eventId });
+    console.log(`Delete event ${eventId} successfully!`);
+    return response;
+  } catch (error) {
+    console.error(`Delete event ${eventId} failed!`);
+  }
+}

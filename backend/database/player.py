@@ -30,20 +30,6 @@ def add_player(p_name, veri_code, e_id):
     return False
 
 
-def get_player(e_id):
-    query = """
-    SELECT name, veri_code
-    FROM player
-    WHERE e_id = %s
-    """
-    res = execute_select_query(query, (e_id, ))
-
-    formatted_results = []
-    for row in res:
-        p_name, veri_code = row
-        formatted_results.append({ 'p_name': p_name, 'veri_code': veri_code })
-    return formatted_results
-
 
 def delete_player(e_id, p_name):
     query = """
@@ -58,16 +44,16 @@ def delete_player(e_id, p_name):
 
 def get_online_player(e_id):
     query = """
-    SELECT name
+    SELECT name, online
     FROM player
-    WHERE e_id = %s AND online = TRUE
+    WHERE e_id = %s
     """
     res = execute_select_query(query, (e_id, ))
 
     formatted_results = []
     for row in res:
-        p_name = row
-        formatted_results.append({ 'p_name': p_name })
+        p_name, online = row
+        formatted_results.append({ 'p_name': p_name, 'online' : online })
     return formatted_results
 
 def authentication(veri_code, e_id):
@@ -81,3 +67,16 @@ def authentication(veri_code, e_id):
         print(f"[DATABASE] Player {rows[0][0]} in event {e_id} login")
         return rows[0][0]
     return ""
+
+def set_online_status(status, name, e_id):
+    query = """
+    UPDATE player
+    SET online = %s
+    WHERE name = %s AND e_id = %s
+    """
+    success, rowcount = execute_query(query, (status, name, e_id))
+    if success and (rowcount > 0):
+        print(f"[DATABASE] {name} {'online' if status else 'offline'}", flush=True)
+        return True
+    print(f"[DATABASE] {name} online FAIL", flush=True)
+    return False

@@ -29,7 +29,7 @@ CREATE TABLE events (
     date DATE NOT NULL,
     a_id VARCHAR(10) NOT NULL,
     champ_name VARCHAR(255),
-    FOREIGN KEY (a_id) REFERENCES admin(id)
+    FOREIGN KEY (a_id) REFERENCES admin(id) ON DELETE CASCADE
 );
 
 CREATE TABLE player (
@@ -37,7 +37,7 @@ CREATE TABLE player (
     veri_code INT NOT NULL,
     e_id INT NOT NULL,
     PRIMARY KEY (name, e_id),
-    FOREIGN KEY (e_id) REFERENCES events(id),
+    FOREIGN KEY (e_id) REFERENCES events(id) ON DELETE CASCADE,
     online BOOLEAN NOT NULL
 );
 
@@ -53,18 +53,18 @@ CREATE TABLE round (
     status round_status_enum DEFAULT 'new',
     type VARCHAR(255) NOT NULL,
     PRIMARY KEY (r_id, e_id),
-    FOREIGN KEY (e_id) REFERENCES events(id)
+    FOREIGN KEY (e_id) REFERENCES events(id) ON DELETE CASCADE
 );
 
-CREATE TYPE vote_result_enum AS ENUM ('red', 'blue', 'tie');
+CREATE TYPE vote_result_enum AS ENUM ('red', 'blue', 'tie', 'empty');
 CREATE TABLE vote (
     p_name VARCHAR(255) NOT NULL,
     r_id INT NOT NULL,
     e_id INT NOT NULL,
     side vote_result_enum NOT NULL,
     PRIMARY KEY (p_name, r_id, e_id), -- 主鍵更新為包含 e_id
-    FOREIGN KEY (p_name, e_id) REFERENCES player(name, e_id),
-    FOREIGN KEY (r_id, e_id) REFERENCES round(r_id, e_id) -- 設置複合外鍵
+    FOREIGN KEY (p_name, e_id) REFERENCES player(name, e_id) ON DELETE CASCADE,
+    FOREIGN KEY (r_id, e_id) REFERENCES round(r_id, e_id) ON DELETE CASCADE -- 設置複合外鍵
 );
 
 INSERT INTO admin (id, pwd) 

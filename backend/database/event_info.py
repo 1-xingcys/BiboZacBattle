@@ -45,3 +45,14 @@ def add_event(name, a_id):
             formatted_results = { 'e_name': e_name, 'e_id': e_id }
             return formatted_results
     return False
+
+def delete_event(e_id):
+    query = """
+    DELETE FROM events
+    WHERE id = %s
+    """
+    success, rowcount = execute_query(query, (e_id,))
+    if success and rowcount > 0:
+        return True
+    return False
+    

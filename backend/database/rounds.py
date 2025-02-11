@@ -31,7 +31,7 @@ def get_rounds(event_id):
 
 def get_players(event_id):
     query = """
-    SELECT name, veri_code
+    SELECT name, veri_code, online
     FROM player
     WHERE e_id = %s
     ORDER BY name ASC
@@ -40,10 +40,11 @@ def get_players(event_id):
     formatted_results = []
 
     for row in rows:
-        name, veri_code = row
+        name, veri_code, online = row
         formatted_results.append({
             'name': name,
             'veri_code': veri_code,
+            'online' : online
         })
 
     return formatted_results
@@ -161,16 +162,22 @@ def is_player_voted(event_id, r_id, p_name):
 
 def vote_status(event_id, r_id):
   query = """
-  SELECT p_name, side
-  FROM vote
-  WHERE r_id = %s AND e_id = %s;
+  SELECT name, online, COALESCE(side, 'empty')
+  FROM (
+    SELECT pl.name AS name, pl.online AS online, COALESCE(v.r_id, -1) AS r_id, v.side AS side
+    FROM player AS pl
+    LEFT JOIN vote AS v ON v.p_name = pl.name AND v.r_id = %s
+    WHERE pl.e_id = %s 
+  )
+  WHERE r_id IN (%s, -1)
   """
-  rows = execute_select_query(query, (r_id, event_id))
+  rows = execute_select_query(query, (r_id, event_id, r_id))
   formatted_results = []
   for row in rows:
-      p_name, side = row
+      p_name, online, side = row
       formatted_results.append({
         'p_name' : p_name,
+        'online' : online,
         'side' : side
       })
   

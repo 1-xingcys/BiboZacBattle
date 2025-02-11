@@ -21,3 +21,14 @@ export const authentication = async (e_id, veri_code) => {
     throw error;
   }
 };
+
+export const offline = async (e_id, name) => {
+  try {
+    const response = await apiCall(`/player/logout`, "POST", { e_id, name });
+    console.log("API response:", response); 
+    return response;
+  } catch (error) {
+    console.error("Logout (offline) failed:", error.message);
+    throw error;
+  }
+};

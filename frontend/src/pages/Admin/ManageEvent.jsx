@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import socket from '../../socket';
 import styles from './ManageEvent.module.css';
 import Create1on1 from './Create1on1';
+import PlayerCard from '../Component/PlayersCard';
 
 function ManageEvent() {
   const { user } = useAuth();
@@ -105,6 +106,8 @@ function ManageEvent() {
           </div>
         ))}
       </div>
+
+      <PlayerCard players={players}/>
       
       <div className={styles.buttonGroup}>
         <Create1on1 players={players}/>

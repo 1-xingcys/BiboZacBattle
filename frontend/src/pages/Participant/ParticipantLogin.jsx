@@ -11,13 +11,11 @@ function ParticipantLogin() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    try {
-      const response = await authentication(eventId, veriCode);
+    const response = await authentication(eventId, veriCode);
+    if(response) {
       const userData = { username: response.name, role: 'participant' }; // 模擬用戶資訊
       login(userData);
       navigate(`/participant/${eventId}/${eventName}/${response.name}`);
-    } catch (error){
-      alert('Invalid verification code');
     }
   };
 

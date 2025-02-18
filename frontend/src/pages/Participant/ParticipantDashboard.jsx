@@ -45,12 +45,10 @@ function ParticipantDashboard() {
   const handleLogout = async (e) => {
     e.preventDefault();
     socket.emit('request_leave', { eventId });
-    try {
-      await offline(eventId, user.username);
+    const response = await offline(eventId, user.username);
+    if(response){
       logout();
       navigate(`/participant/${eventId}/${eventName}`);
-    } catch (error){
-      alert(`Logout FAIL: ${error}`);
     }
   };
 

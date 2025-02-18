@@ -7,7 +7,7 @@ export const get_veri_code = async (name, e_id) => {
     return response;
   } catch (error) {
     console.error("Sign up failed:", error.message);
-    throw error;
+    alert("Sign up failed:", error.message);
   }
 };
 
@@ -18,7 +18,7 @@ export const authentication = async (e_id, veri_code) => {
     return response;
   } catch (error) {
     console.error("Login failed:", error.message);
-    throw error;
+    alert("Login failed:", error.message);
   }
 };
 
@@ -29,6 +29,6 @@ export const offline = async (e_id, name) => {
     return response;
   } catch (error) {
     console.error("Logout (offline) failed:", error.message);
-    throw error;
+    alert("Logout (offline) failed:", error.message);
   }
 };

@@ -38,13 +38,12 @@ function SignUpDashboard() {
       setErrorMessage("Name cannot be empty");
       return;
     }
-
-    try {
-      const response = await get_veri_code(name, eventId); // 呼叫 API 獲取驗證碼
+    const response = await get_veri_code(name, eventId); // 呼叫 API 獲取驗證碼
+    if(response){
       setRows([...rows, { name, verificationCode: response.veri_code }]); // 將新資料加入表格
       setInputName(""); // 清空輸入欄位
       setErrorMessage(""); // 清除錯誤訊息
-    } catch (error) {
+    } else {
       setErrorMessage("Failed to fetch verification code");
     }
   };

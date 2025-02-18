@@ -11,15 +11,16 @@ const VoteChart = ({ votes, curRound }) => {
   // 計算投票數量
   const voteCount = { blue: 0, red: 0, tie: 0 };
   const voteDetails = { blue: [], red: [], tie: [] };
-  const playerHasNotVote = [];
+  const playerHasNotVote = { name: [], online: [] };
 
   votes.forEach(({ p_name, online, side }) => {
     if (voteCount[side] !== undefined) {
       voteCount[side]++;
       voteDetails[side].push(p_name);
     }
-    else if (side === 'empty' && online) {
-      playerHasNotVote.push(p_name);
+    else if (side === 'empty') {
+      playerHasNotVote['name'].push(p_name);
+      playerHasNotVote['online'].push(online)
     }
   });
 
@@ -105,11 +106,20 @@ const VoteChart = ({ votes, curRound }) => {
             </tr>
           </thead>
           <tbody>
-            {playerHasNotVote.map((p_name, index) => (
+          {playerHasNotVote.name.length > 0 ? (
+            playerHasNotVote.name.map((playerName, index) => (
               <tr key={index}>
-                <td>{p_name}</td>
+                <td >
+                  {playerName}
+                  {playerHasNotVote.online[index] ? "（在線）" : "（離線）"}
+                </td>
               </tr>
-            ))}
+            ))
+          ) : (
+            <tr>
+              <td colSpan="2">所有玩家皆已投票 🎉</td>
+            </tr>
+          )}
           </tbody>
         </table>
       </div>

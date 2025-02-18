@@ -18,13 +18,9 @@ function OrganizerDashboard() {
   };
 
   const getEventInfo = async () => {
-    try {
-      const a_id = 'admin';
-      const response = await get_event_info(a_id);
-      setEventList(response || []);
-    } catch (error) {
-      console.error('Failed to fetch event info:', error.message);
-    }
+    const a_id = 'admin';
+    const response = await get_event_info(a_id);
+    setEventList(response || []);
   };
 
   useEffect(() => {
@@ -38,24 +34,20 @@ function OrganizerDashboard() {
     }
 
     setCreating(true);
-    try {
-      const a_id = 'admin';
-      const response = await create_new_event(eventName, a_id);
+    const a_id = 'admin';
+    const response = await create_new_event(eventName, a_id);
 
-      if (response.e_id) {
-        await getEventInfo();
-        handlePlayer(response.e_id, response.e_name);
-      } else {
-        throw new Error('Invalid response: e_name is missing');
-      }
-
-      setEventName('');
-      setCreating(false);
-    } catch (error) {
-      console.error('Failed to create event:', error.message);
+    if (response.e_id) {
+      await getEventInfo();
+      handlePlayer(response.e_id, response.e_name);
+    } else {
       setErrorMessage('Failed to create event. Please try again.');
       setCreating(false);
+      return;
     }
+
+    setEventName('');
+    setCreating(false);
   };
 
   const deleteEvent = async (eventId) => {

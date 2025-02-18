@@ -7,7 +7,7 @@ export const creat_battle_event = async (event_name, red_side, blue_side) => {
     return response;
   } catch (error) {
     console.error("Create event failed:", error.message);
-    throw error;
+    alert("Create event failed:", error.message);
   }
 };
 
@@ -18,7 +18,7 @@ export const get_event = async (event_id) => {
     return response;
   } catch (error) {
     console.error("Get event failed: ", error.message);
-    throw error;
+    alert("Get event failed: ", error.message);
   }
 }
 
@@ -29,7 +29,7 @@ export const creat_7_to_smoke = async (participants) => {
     return response;
   } catch (error) {
     console.error("Create 7 to smoke failed:", error.message);
-    throw error;
+    alert("Create 7 to smoke failed:", error.message);
   }
 };
 
@@ -41,7 +41,7 @@ export const get_event_info = async (a_id) => {
     return response;
   } catch (error) {
     console.error("Get event failed: ", error.message);
-    throw error;
+    alert("Get event failed: ", error.message);
   }
 }
 
@@ -52,7 +52,7 @@ export const create_new_event = async (name, a_id) => {
     return response;
   } catch (error) {
     console.error(`Create new event ${name} failed!`);
-    throw error;
+    alert(`Create new event ${name} failed!`);
   }
 }
 
@@ -63,5 +63,6 @@ export const delete_event = async (eventId) => {
     return response;
   } catch (error) {
     console.error(`Delete event ${eventId} failed!`);
+    alert(`Delete event ${eventId} failed!`);
   }
 }
